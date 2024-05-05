@@ -9,9 +9,22 @@ export const getAllEvents = async (req, res) => {
 }
 
 export const createEvent = async (req, res) => {
-  const { title, description, date } = req.body
+  const { title, description, date, venueId, eventStatus, eventCategory } =
+    req.body
+
+  const venue = await prisma.venues.findUnique({ where: { id: venueId } })
+  if (!venue) throw new NotFoundError(`No venue with id ${venueId}`)
+  const venueIdDb = venue.id
+
   const event = await prisma.events.create({
-    data: { title, description, date },
+    data: {
+      title,
+      description,
+      date,
+      venueId: venueIdDb,
+      eventStatus,
+      eventCategory,
+    },
   })
   res.status(StatusCodes.CREATED).json({ event })
 }
@@ -25,12 +38,25 @@ export const getEvent = async (req, res) => {
 
 export const updateEvent = async (req, res) => {
   const { id } = req.params
-  const { title, description, date } = req.body
+  const { title, description, date, venueId, eventStatus, eventCategory } =
+    req.body
+
+  const venue = await prisma.venues.findUnique({ where: { id: venueId } })
+  if (!venue) throw new NotFoundError(`No venue with id ${venueId}`)
+  const venueIdDb = venue.id
+
   const event = await prisma.events.findUnique({ where: { id } })
   if (!event) throw new NotFoundError(`No event with id ${id}`)
   const updatedEvent = await prisma.events.update({
     where: { id },
-    data: { title, description, date },
+    data: {
+      title,
+      description,
+      date,
+      venueId: venueIdDb,
+      eventStatus,
+      eventCategory,
+    },
   })
   res
     .status(StatusCodes.OK)

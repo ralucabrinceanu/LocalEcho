@@ -24,9 +24,8 @@ export const validateVenueInput = withValidationErrors([
   body('city').notEmpty().withMessage('city is required'),
 ])
 
-// export const validateIdParam = withValidationErrors([
-//   param('id').isUUID(4).withMessage('Invalid UUID format for ID parameter'),
-// ])
+// TODO
+// validateIdParam
 
 export const validateRegisterInput = withValidationErrors([
   body('firstName').notEmpty().withMessage('firstName is required'),
@@ -44,7 +43,7 @@ export const validateRegisterInput = withValidationErrors([
     .notEmpty()
     .withMessage('password is required')
     .isLength({ min: 6 })
-    .withMessage('password must be at least 8 characters long'),
+    .withMessage('password must be at least 6 characters long'),
 ])
 
 export const validateLoginInput = withValidationErrors([
@@ -59,13 +58,38 @@ export const validateLoginInput = withValidationErrors([
 export const validateEventInput = withValidationErrors([
   body('title')
     .notEmpty()
-    .withMessage('title is required')
+    .withMessage('Title is required ')
     .isLength({ min: 3, max: 100 }),
   body('description')
     .optional()
     .isString()
-    .withMessage('description must be a string'),
-  body('date').isISO8601().toDate().withMessage('date must be a valid date'),
+    .withMessage('Description must be a string'),
+  body('date')
+    .isISO8601()
+    .toDate()
+    .custom((value, { req }) => {
+      if (new Date(value) < new Date()) {
+        // req.body.eventStatus = 'COMPLETED'
+        throw new Error('Event date cannot be in the past')
+      }
+      return true
+    })
+    .withMessage('Date must be a valid date '),
+  body('eventStatus')
+    .optional()
+    .isIn(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'ON_HOLD'])
+    .withMessage('Invalid event status '),
+  body('eventCategory')
+    .optional()
+    .isIn([
+      'MUSIC',
+      'ART_AND_CULTURE',
+      'FOOD_AND_DRINK',
+      'FAMILY_AND_KIDS',
+      'CHARITY',
+      'HEALTH_AND_WELLNESS',
+    ])
+    .withMessage('Invalid event category '),
 ])
 
 export const validateRatingInput = withValidationErrors([

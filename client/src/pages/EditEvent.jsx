@@ -1,7 +1,7 @@
 import React from 'react'
 
 const EditEvent = () => {
-  return <div></div>
+  return <div>edit event</div>
 }
 
 export default EditEvent

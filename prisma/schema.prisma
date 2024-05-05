@@ -8,12 +8,13 @@ datasource db {
 }
 
 model Venues {
-  id       String  @id @default(uuid())
+  id       String   @id @default(uuid())
   name     String
   address  String
   capacity Int
   city     String
-  zipCode  String? @map("zip_code")
+  zipCode  String?  @map("zip_code")
+  events   Events[]
 
   @@map("venues")
 }
@@ -38,15 +39,36 @@ enum Role {
 }
 
 model Events {
-  id            String    @id @default(uuid())
+  id            String        @id @default(uuid())
   title         String
   description   String?
   date          DateTime
   ratings       Ratings[]
   reviews       Reviews[]
-  averageRating Float?    @default(0)
+  averageRating Float?        @default(0)
+  venue         Venues?       @relation(fields: [venueId], references: [id], onDelete: SetNull)
+  venueId       String?       @map("venue_id")
+  eventStatus   EventStatus   @default(SCHEDULED) @map("event_status")
+  eventCategory EventCategory @default(FAMILY_AND_KIDS) @map("event_category")
 
   @@map("events")
+}
+
+enum EventStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+}
+
+enum EventCategory {
+  MUSIC
+  ART_AND_CULTURE
+  FOOD_AND_DRINK
+  FAMILY_AND_KIDS
+  CHARITY
+  HEALTH_AND_WELLNESS
 }
 
 model Ratings {
@@ -54,7 +76,7 @@ model Ratings {
   event       Events @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId     String @map("event_id")
   value       Int
-  createdBy   Users  @relation(fields: [createdById], references: [id])
+  createdBy   Users  @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String @map("created_by")
 
   @@map("ratings")
@@ -65,7 +87,7 @@ model Reviews {
   event       Events @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId     String @map("event_id")
   content     String
-  createdBy   Users  @relation(fields: [createdById], references: [id])
+  createdBy   Users  @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String @map("created_by")
 
   @@map("reviews")
