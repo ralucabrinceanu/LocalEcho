@@ -135,3 +135,12 @@ export const validateUpdateUserInput = withValidationErrors([
         throw new BadRequestError('email already exists')
     }),
 ])
+
+export const validateUserRoleInput = withValidationErrors([
+  body('userId').notEmpty().withMessage('userId is required'),
+  body('role')
+    .notEmpty()
+    .withMessage('role is required')
+    .isIn(['USER', 'ADMIN', 'EVENT_PLANNER'])
+    .withMessage('Invalid role'),
+])

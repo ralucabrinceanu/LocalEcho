@@ -28,6 +28,7 @@ model Users {
   role      Role[]    @default([USER])
   ratings   Ratings[]
   reviews   Reviews[]
+  events    Events[]
 
   @@map("users")
 }
@@ -50,6 +51,8 @@ model Events {
   venueId       String?       @map("venue_id")
   eventStatus   EventStatus   @default(SCHEDULED) @map("event_status")
   eventCategory EventCategory @default(FAMILY_AND_KIDS) @map("event_category")
+  createdBy     Users         @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById   String        @map("created_by")
 
   @@map("events")
 }

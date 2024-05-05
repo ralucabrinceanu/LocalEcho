@@ -9,12 +9,24 @@ import {
   deleteEvent,
 } from '../controllers/eventController.js'
 import { validateEventInput } from '../middleware/validation-middleware.js'
+import { authorizePermissions } from '../middleware/auth-middleware.js'
 
-router.route('/').get(getAllEvents).post(validateEventInput, createEvent)
+router
+  .route('/')
+  .get(getAllEvents)
+  .post(
+    validateEventInput,
+    authorizePermissions('ADMIN', 'EVENT_PLANNER'),
+    createEvent
+  )
 router
   .route('/:id')
   .get(getEvent)
-  .patch(validateEventInput, updateEvent)
-  .delete(deleteEvent)
+  .patch(
+    validateEventInput,
+    authorizePermissions('ADMIN', 'EVENT_PLANNER'),
+    updateEvent
+  )
+  .delete(authorizePermissions('ADMIN', 'EVENT_PLANNER'), deleteEvent)
 
 export default router

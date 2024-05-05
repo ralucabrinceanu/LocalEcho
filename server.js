@@ -39,7 +39,7 @@ app.get('/project/test', (req, res) => {
 // routes
 app.use('/project/venues', venueRouter)
 app.use('/project/auth', authRouter)
-app.use('/project/events', eventRouter)
+app.use('/project/events', authenticateUser, eventRouter)
 app.use('/project/ratings', authenticateUser, ratingRouter)
 app.use('/project/reviews', authenticateUser, reviewRouter)
 app.use('/project/users', authenticateUser, userRouter)
