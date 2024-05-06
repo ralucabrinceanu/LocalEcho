@@ -20,6 +20,8 @@ import { action as loginAction } from './pages/Login'
 import { loader as dashboardLoader } from './pages/DashboardLayout'
 import { loader as allEventsLoader } from './pages/AllEvents'
 import { action as deleteEventAction } from './pages/DeleteEvent'
+import { loader as adminLoader } from './pages/Admin'
+import { action as profileAction } from './pages/Profile'
 
 export const checkDefaultTheme = () => {
   const isDarkTheme = localStorage.getItem('darkTheme') === 'true'
@@ -69,10 +71,12 @@ const router = createBrowserRouter([
           {
             path: 'profile',
             element: <Profile />,
+            action: profileAction,
           },
           {
             path: 'admin',
             element: <Admin />,
+            loader: adminLoader,
           },
           {
             path: 'edit-event/:id',

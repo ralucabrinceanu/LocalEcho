@@ -20,15 +20,17 @@ model Venues {
 }
 
 model Users {
-  id        String    @id @default(uuid())
-  firstName String    @map("first_name")
-  lastName  String    @map("last_name")
-  email     String    @unique
-  password  String
-  role      Role[]    @default([USER])
-  ratings   Ratings[]
-  reviews   Reviews[]
-  events    Events[]
+  id             String    @id @default(uuid())
+  firstName      String    @map("first_name")
+  lastName       String    @map("last_name")
+  avatar         String?
+  avatarPublicId String?   @map("avatar_id")
+  email          String    @unique
+  password       String
+  role           Role[]    @default([USER])
+  ratings        Ratings[]
+  reviews        Reviews[]
+  events         Events[]
 
   @@map("users")
 }
@@ -51,8 +53,8 @@ model Events {
   venueId       String?       @map("venue_id")
   eventStatus   EventStatus   @default(SCHEDULED) @map("event_status")
   eventCategory EventCategory @default(FAMILY_AND_KIDS) @map("event_category")
-  createdBy     Users         @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  createdById   String        @map("created_by")
+  createdBy     Users?        @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdById   String?       @map("created_by")
 
   @@map("events")
 }
