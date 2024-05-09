@@ -1,6 +1,12 @@
 import React from 'react'
 
-const FormRowSelect = ({ name, labelText, defaultValue = '', list }) => {
+const FormRowSelect = ({
+  name,
+  labelText,
+  defaultValue = '',
+  list,
+  onChange,
+}) => {
   return (
     <div className="form-row">
       <label htmlFor={name} className="form-label">
@@ -10,6 +16,7 @@ const FormRowSelect = ({ name, labelText, defaultValue = '', list }) => {
         name={name}
         id={name}
         className="form-select"
+        onChange={onChange}
         defaultValue={defaultValue}
       >
         {list.map((itemValue) => {

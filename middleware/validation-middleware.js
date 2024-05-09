@@ -24,8 +24,7 @@ export const validateVenueInput = withValidationErrors([
   body('city').notEmpty().withMessage('city is required'),
 ])
 
-// TODO
-// validateIdParam
+// TODO: validateIdParam
 
 export const validateRegisterInput = withValidationErrors([
   body('firstName').notEmpty().withMessage('firstName is required'),
@@ -64,20 +63,27 @@ export const validateEventInput = withValidationErrors([
     .optional()
     .isString()
     .withMessage('Description must be a string'),
-  body('date')
+  body('startDate')
     .isISO8601()
     .toDate()
+    .withMessage('Start date must be a valid date'),
+  body('endDate')
+    .isISO8601()
+    .toDate()
+    .withMessage('End date must be a valid date'),
+  body()
     .custom((value, { req }) => {
-      if (new Date(value) < new Date()) {
-        // req.body.eventStatus = 'COMPLETED'
-        throw new Error('Event date cannot be in the past')
+      const startDate = new Date(req.body.startDate)
+      const endDate = new Date(req.body.endDate)
+      if (startDate >= endDate) {
+        throw new Error('Start date must be before end date')
       }
       return true
     })
-    .withMessage('Date must be a valid date '),
+    .withMessage('Start date must be before end date'),
   body('eventStatus')
     .optional()
-    .isIn(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'ON_HOLD'])
+    .isIn(['SCHEDULED', 'RIGHT_NOW', 'COMPLETED', 'CANCELLED', 'ON_HOLD'])
     .withMessage('Invalid event status '),
   body('eventCategory')
     .optional()
@@ -92,18 +98,18 @@ export const validateEventInput = withValidationErrors([
     .withMessage('Invalid event category '),
 ])
 
-export const validateRatingInput = withValidationErrors([
-  body('eventId')
-    .notEmpty()
-    .withMessage('Event ID is required')
-    .isUUID()
-    .withMessage('Invalid event ID format'),
-  body('value')
-    .notEmpty()
-    .withMessage('Rating value is required')
-    .isInt({ min: 1, max: 5 })
-    .withMessage('Rating value must be between 1 and 5'),
-])
+// export const validateRatingInput = withValidationErrors([
+//   body('eventId')
+//     .notEmpty()
+//     .withMessage('Event ID is required')
+//     .isUUID()
+//     .withMessage('Invalid event ID format'),
+//   body('value')
+//     .notEmpty()
+//     .withMessage('Rating value is required')
+//     .isInt({ min: 1, max: 5 })
+//     .withMessage('Rating value must be between 1 and 5'),
+// ])
 
 export const validateReviewInput = withValidationErrors([
   body('eventId')
@@ -111,6 +117,26 @@ export const validateReviewInput = withValidationErrors([
     .withMessage('Event ID is required')
     .isUUID()
     .withMessage('Invalid event ID format'),
+  body('rating')
+    .notEmpty()
+    .withMessage('Rating value is required')
+    .isInt({ min: 1, max: 5 })
+    .withMessage('Rating value must be between 1 and 5'),
+  body('content')
+    .notEmpty()
+    .withMessage('Review content is required')
+    .isLength({ min: 10, max: 500 })
+    .withMessage('Review content must be between 10 and 500 characters')
+    .matches(/^[a-zA-Z0-9.,!? ]*$/)
+    .withMessage('Review content contains invalid characters'),
+])
+
+export const validateReviewUpdateInput = withValidationErrors([
+  body('rating')
+    .notEmpty()
+    .withMessage('Rating value is required')
+    .isInt({ min: 1, max: 5 })
+    .withMessage('Rating value must be between 1 and 5'),
   body('content')
     .notEmpty()
     .withMessage('Review content is required')

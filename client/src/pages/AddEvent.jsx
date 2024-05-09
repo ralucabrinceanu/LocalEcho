@@ -1,18 +1,52 @@
 import React from 'react'
-import { FormRow, DateTimeFormRow, FormRowSelect } from '../components'
-import Wrapper from '../assets/wrappers/DashboardFormPage'
-import { Form, useNavigation, useOutletContext } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Form, redirect, useOutletContext } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import {
+  FormRow,
+  DateTimeFormRow,
+  FormRowSelect,
+  SubmitBtn,
+} from '../components'
+import Wrapper from '../assets/wrappers/DashboardFormPage'
 import customFetch from '../utils/customFetch'
 import { EventCategory, EventStatus } from '@prisma/client'
-// import Venue from '@prisma/client'
-// console.log(Venue)
-// console.log(EventCategory)
+
+export const action = async ({ request }) => {
+  const formData = await request.formData()
+  const data = Object.fromEntries(formData)
+  try {
+    await customFetch.post('/events', data)
+    toast.success('Event added successfully')
+  } catch (error) {
+    toast.error(error?.response?.data?.msg)
+    return error
+  }
+  return redirect('/dashboard/all-events')
+}
 
 const AddEvent = () => {
   const { user } = useOutletContext()
-  const navigation = useNavigation()
-  const isSubmitting = navigation.state === 'submitting'
+
+  const [venues, setVenues] = useState([])
+  useEffect(() => {
+    const fetchVenues = async () => {
+      try {
+        const response = await customFetch.get('/venues')
+        // console.log(response)
+        if (Array.isArray(response.data)) {
+          setVenues(response.data)
+        } else if (response.data && response.data.venues) {
+          setVenues(response.data.venues)
+        } else {
+          console.error('Invalid venues data format:', response.data)
+        }
+      } catch (error) {
+        console.error('Error fetching venues:', error)
+      }
+    }
+    fetchVenues()
+  }, [])
 
   return (
     <Wrapper>
@@ -21,11 +55,21 @@ const AddEvent = () => {
         <div className="form-center">
           <FormRow type="text" name="title" labelText="title" />
           <FormRow type="text" name="description" labelText="description" />
-          <DateTimeFormRow name="date" labelText="date and time" />
+          <DateTimeFormRow name="startDate" labelText="Start Date" />
+          <DateTimeFormRow name="endDate" labelText="End Date" />
 
-          {/* //TODO */}
-          {/* venue id/name */}
-          {/* event category */}
+          <div className="form-row">
+            <label htmlFor="venueId" className="form-label">
+              Venue
+            </label>
+            <select name="venueId" id="venueId" className="form-select">
+              {venues.map((venue) => (
+                <option key={venue.id} value={venue.id}>
+                  {venue.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <FormRowSelect
             name="eventStatus"
@@ -33,12 +77,12 @@ const AddEvent = () => {
             defaultValue={EventStatus.SCHEDULED}
             list={Object.values(EventStatus)}
           />
-          {/* <FormRowSelect
+          <FormRowSelect
             name="eventCategory"
             labelText="category"
             defaultValue={EventCategory.FAMILY_AND_KIDS}
             list={Object.values(EventCategory)}
-          /> */}
+          />
 
           {/* <div className="form-row">
             <label htmlFor="eventStatus" className="form-label">
@@ -60,13 +104,7 @@ const AddEvent = () => {
             </select>
           </div> */}
 
-          <button
-            type="submit"
-            className="btn btn-block form-btn"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'submitting' : 'submit'}
-          </button>
+          <SubmitBtn formBtn />
         </div>
       </Form>
     </Wrapper>
@@ -74,3 +112,5 @@ const AddEvent = () => {
 }
 
 export default AddEvent
+
+// TODO NODEJS: event_planner can add venue, and when add event can only see the venues added by him

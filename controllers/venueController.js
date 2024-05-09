@@ -10,11 +10,6 @@ export const getAllVenues = async (req, res) => {
 
 export const createVenue = async (req, res) => {
   const { name, address, capacity, city, zipCode } = req.body
-  // if (!name || !address || !capacity || !city) {
-  //   return res
-  //     .status(400)
-  //     .json({ msg: 'Please provide name, address, capacity and city!' })
-  // }
   const venue = await prisma.venues.create({
     data: { name, address, capacity, city, zipCode },
   })
@@ -59,3 +54,5 @@ export const deleteVenue = async (req, res) => {
     .status(StatusCodes.OK)
     .json({ msg: 'Venue deleted successfully', venue: deletedVenue })
 }
+
+// TODO REACT: venue page visible only for admin and event_planner

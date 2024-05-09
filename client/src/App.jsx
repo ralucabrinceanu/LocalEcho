@@ -22,6 +22,10 @@ import { loader as allEventsLoader } from './pages/AllEvents'
 import { action as deleteEventAction } from './pages/DeleteEvent'
 import { loader as adminLoader } from './pages/Admin'
 import { action as profileAction } from './pages/Profile'
+import { action as addEventAction } from './pages/AddEvent'
+import { loader as editEventLoader } from './pages/EditEvent'
+import { action as editEventAction } from './pages/EditEvent'
+import { loader as statsLoader } from './pages/Stats'
 
 export const checkDefaultTheme = () => {
   const isDarkTheme = localStorage.getItem('darkTheme') === 'true'
@@ -58,10 +62,12 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <AddEvent />,
+            action: addEventAction,
           },
           {
             path: 'stats',
             element: <Stats />,
+            loader: statsLoader,
           },
           {
             path: 'all-events',
@@ -81,6 +87,8 @@ const router = createBrowserRouter([
           {
             path: 'edit-event/:id',
             element: <EditEvent />,
+            loader: editEventLoader,
+            action: editEventAction,
           },
           {
             path: 'delete-event/:id',
@@ -97,3 +105,9 @@ const App = () => {
 }
 
 export default App
+
+// TODO NODEJS: crud user - delete account?, (review, ratings)
+// TODO NODEJS: 4 unit tests,
+// TODO NODEJS optional: OAuth
+
+// TODO REACT: add + edit venues, edit events

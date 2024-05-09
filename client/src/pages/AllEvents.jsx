@@ -4,10 +4,15 @@ import customFetch from '../utils/customFetch'
 import { useLoaderData } from 'react-router-dom'
 import { useContext, createContext } from 'react'
 
-export const loader = async () => {
+export const loader = async ({ request }) => {
+  // console.log(request.url)
+  const params = Object.fromEntries([
+    ...new URL(request.url).searchParams.entries(),
+  ])
+  // console.log(params)
   try {
-    const { data } = await customFetch.get('/events')
-    return { data }
+    const { data } = await customFetch.get('/events', { params })
+    return { data, searchValues: { ...params } }
   } catch (error) {
     toast.error(error?.response?.data?.msg)
     return error
@@ -17,10 +22,10 @@ export const loader = async () => {
 const AllEventsContext = createContext()
 
 const AllEvents = () => {
-  const { data } = useLoaderData()
+  const { data, searchValues } = useLoaderData()
 
   return (
-    <AllEventsContext.Provider value={{ data }}>
+    <AllEventsContext.Provider value={{ data, searchValues }}>
       <SearchContainer />
       <EventsContainer />
     </AllEventsContext.Provider>

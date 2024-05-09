@@ -7,6 +7,7 @@ import {
   getEvent,
   updateEvent,
   deleteEvent,
+  showStats,
 } from '../controllers/eventController.js'
 import { validateEventInput } from '../middleware/validation-middleware.js'
 import { authorizePermissions } from '../middleware/auth-middleware.js'
@@ -19,6 +20,9 @@ router
     authorizePermissions('ADMIN', 'EVENT_PLANNER'),
     createEvent
   )
+
+router.route('/stats').get(showStats)
+
 router
   .route('/:id')
   .get(getEvent)

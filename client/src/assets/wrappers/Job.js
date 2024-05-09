@@ -28,6 +28,7 @@ const Wrapper = styled.article`
   }
   .info {
     h5 {
+      font-size: 1.3rem !important;
       margin-bottom: 0.5rem;
     }
     p {
@@ -35,6 +36,7 @@ const Wrapper = styled.article`
       text-transform: capitalize;
       letter-spacing: var(--letter-spacing);
       color: var(--text-secondary-color);
+      font-size: 0.9rem !important;
     }
   }
   .content {
@@ -56,8 +58,8 @@ const Wrapper = styled.article`
     text-transform: capitalize;
     letter-spacing: var(--letter-spacing);
     text-align: center;
-    width: 100px;
-    height: 30px;
+    width: 110px;
+    height: 40px;
     display: grid;
     align-items: center;
   }

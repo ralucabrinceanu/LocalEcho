@@ -1,8 +1,15 @@
 import { StatusCodes } from 'http-status-codes'
-import { NotFoundError, UnauthorizedError } from '../errors/customErrors.js'
 import cloudinary from 'cloudinary'
 import { promises as fs } from 'fs'
 import { PrismaClient } from '@prisma/client'
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthenticatedError,
+  UnauthorizedError,
+} from '../errors/customErrors.js'
+import { comparePassword, hashPassword } from '../utils/passwordUtils.js'
+
 const prisma = new PrismaClient()
 
 export const getAllUsers = async (req, res) => {
@@ -27,7 +34,6 @@ export const getApplicationStats = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   // console.log('REQ.FILE ----------------------------> :', req.file)
-
   const user = await prisma.users.findUnique({ where: { id: req.user.userId } })
   if (!user) throw new NotFoundError(`No user with id ${req.user.userId}`)
 
@@ -40,7 +46,6 @@ export const updateUser = async (req, res) => {
     updatedUserData.avatar = response.secure_url
     updatedUserData.avatarPublicId = response.public_id
   }
-
   if (req.file && user.avatarPublicId) {
     await cloudinary.v2.uploader.destroy(user.avatarPublicId)
   }
@@ -49,12 +54,31 @@ export const updateUser = async (req, res) => {
     where: { id: req.user.userId },
     data: updatedUserData,
   })
-
   const { password, ...userWithoutPassword } = updatedUser
 
   res
     .status(StatusCodes.OK)
     .json({ msg: 'User updated successfully', user: userWithoutPassword })
+}
+
+export const updateUserPassword = async (req, res) => {
+  const { oldPassword, newPassword } = req.body
+  if (!oldPassword || !newPassword)
+    throw new BadRequestError(`Please provide both values`)
+
+  const user = await prisma.users.findUnique({ where: { id: req.user.userId } })
+  if (!user) throw new UnauthenticatedError('User not found')
+
+  const isPasswordCorrect = await comparePassword(oldPassword, user.password)
+  if (!isPasswordCorrect) throw new UnauthenticatedError('Invalid Credentials')
+
+  const hashedNewPassword = await hashPassword(newPassword)
+  await prisma.users.update({
+    where: { id: req.user.userId },
+    data: { password: hashedNewPassword },
+  })
+
+  res.status(StatusCodes.OK).json({ msg: 'Password Updated' })
 }
 
 export const updateUserRole = async (req, res) => {

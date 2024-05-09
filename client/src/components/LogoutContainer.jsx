@@ -8,6 +8,9 @@ const LogoutContainer = () => {
   const [showLogout, setShowLogout] = useState(false)
   const { user, logoutUser } = useDashboardContext()
 
+  const initials =
+    user.firstName.charAt(0) + user.lastName.charAt(0).toUpperCase()
+
   return (
     <Wrapper>
       <button
@@ -20,7 +23,7 @@ const LogoutContainer = () => {
         ) : (
           <FaUserCircle />
         )}
-        {user?.firstName}
+        {initials}
         <FaCaretDown />
       </button>
       <div className={showLogout ? 'dropdown show-dropdown' : 'dropdown'}>

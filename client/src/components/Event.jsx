@@ -1,73 +1,114 @@
-import React from 'react'
-import { FaCalendarAlt } from 'react-icons/fa'
+import React, { useState, useEffect } from 'react'
+import { MdOutlineDescription } from 'react-icons/md'
 import { IoLocationSharp, IoStar } from 'react-icons/io5'
 import { TbCategory2 } from 'react-icons/tb'
 import { Link, Form } from 'react-router-dom'
 import Wrapper from '../assets/wrappers/Job'
-import day from 'dayjs'
+import dayjs from 'dayjs'
 import advancedFormat from 'dayjs/plugin/advancedFormat'
+import isBetween from 'dayjs/plugin/isBetween'
+import { EventStatus } from '@prisma/client'
 import EventInfo from './EventInfo'
-day.extend(advancedFormat)
+
+dayjs.extend(advancedFormat)
+dayjs.extend(isBetween)
 
 const Event = ({
   id,
   title,
   description,
-  date,
+  startDate,
+  endDate,
   eventStatus,
   averageRating,
   eventCategory,
+  venueId,
 }) => {
-  //   console.log(eventStatus)
-  const eventDate = day(date).format('MMM Do, YYYY, HH:mm')
+  const [status, setStatus] = useState(eventStatus)
+
+  useEffect(() => {
+    if (
+      eventStatus === EventStatus.CANCELLED ||
+      eventStatus === EventStatus.ON_HOLD
+    ) {
+      setStatus(eventStatus)
+    } else {
+      const currentDate = dayjs()
+      const eventStartDate = dayjs(startDate)
+      const eventEndDate = dayjs(endDate)
+
+      if (currentDate.isAfter(eventEndDate)) {
+        setStatus(EventStatus.COMPLETED)
+      } else if (currentDate.isBetween(eventStartDate, eventEndDate)) {
+        setStatus(EventStatus.RIGHT_NOW)
+      } else {
+        setStatus(EventStatus.SCHEDULED)
+      }
+    }
+  }, [startDate, endDate, eventStatus])
+
+  const eventStartDate = dayjs(startDate).format('MMM Do, YYYY, HH:mm')
+  const eventEndDate = dayjs(endDate).format('MMM Do, YYYY, HH:mm')
 
   let statusClassName
-  switch (eventStatus) {
-    case 'SCHEDULED':
+  switch (status) {
+    case EventStatus.SCHEDULED:
       statusClassName = 'scheduled'
       break
-    case 'IN_PROGRESS':
-      statusClassName = 'in-progress'
+    case EventStatus.RIGHT_NOW:
+      statusClassName = 'right-now'
       break
-    case 'COMPLETED':
+    case EventStatus.COMPLETED:
       statusClassName = 'completed'
       break
-    case 'CANCELLED':
+    case EventStatus.CANCELLED:
       statusClassName = 'cancelled'
       break
-    case 'ON_HOLD':
+    case EventStatus.ON_HOLD:
       statusClassName = 'on-hold'
       break
     default:
       statusClassName = ''
   }
 
+  const truncatedDescription = description.slice(0, 40) + '...'
+
+  // console.log(status)
+
   return (
     <Wrapper>
       <header>
         <div className="main-icon">{title.charAt(0)}</div>
         <div className="info">
-          {/* <h5>{eventDate}</h5> */}
-          <p>{title}</p>
+          <h5>{title}</h5>
+          <p>
+            {eventStartDate} - {eventEndDate}
+          </p>
         </div>
       </header>
       <div className="content">
         <div className="content-center">
-          <EventInfo icon={<IoLocationSharp />} text={'!!! ADD VENUE !!!'} />
+          <EventInfo icon={<IoLocationSharp />} text={'venueName'} />
 
           <EventInfo
             icon={<TbCategory2 />}
             text={eventCategory.split('_').join(' ').toLowerCase()}
           />
-          <EventInfo icon={<FaCalendarAlt />} text={eventDate} />
+          <EventInfo
+            icon={<MdOutlineDescription />}
+            text={truncatedDescription}
+          />
           <div className={`status ${statusClassName}`}>
-            {eventStatus.replace('_', ' ')}
+            {/* {status.replace('_', ' ')} */}
+            {status}
           </div>
         </div>
         <footer className="actions">
-          <Link className="btn edit-btn">Edit</Link>
+          <Link to={`../edit-event/${id}`} className="btn edit-btn">
+            Edit
+          </Link>
           <Form method="post" action={`/dashboard/delete-event/${id}`}>
-            <button type="submit" className="btn delete-btn">
+            <button type="submit" className="btn delete-btn ">
               Delete
             </button>
           </Form>
@@ -78,3 +119,5 @@ const Event = ({
 }
 
 export default Event
+
+// TODO NODEJS + REACT: if completed add averageRating

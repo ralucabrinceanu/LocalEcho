@@ -13,7 +13,7 @@ import cloudinary from 'cloudinary'
 import venueRouter from './routes/venueRouter.js'
 import authRouter from './routes/authRouter.js'
 import eventRouter from './routes/eventRouter.js'
-import ratingRouter from './routes/ratingRouter.js'
+// import ratingRouter from './routes/ratingRouter.js'
 import reviewRouter from './routes/reviewRouter.js'
 import userRouter from './routes/userRouter.js'
 
@@ -55,7 +55,7 @@ app.get('/project/test', (req, res) => {
 app.use('/project/venues', venueRouter)
 app.use('/project/auth', authRouter)
 app.use('/project/events', authenticateUser, eventRouter)
-app.use('/project/ratings', authenticateUser, ratingRouter)
+// app.use('/project/ratings', authenticateUser, ratingRouter)
 app.use('/project/reviews', authenticateUser, reviewRouter)
 app.use('/project/users', authenticateUser, userRouter)
 
