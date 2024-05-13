@@ -1,56 +1,54 @@
 import React from 'react'
-import { Link, Form, redirect, useNavigation } from 'react-router-dom'
-import Wrapper from '../assets/wrappers/RegisterAndLoginPage'
-import { FormRow, Logo, SubmitBtn } from '../components'
-import customFetch from '../utils/customFetch'
-import { toast } from 'react-toastify'
-
-export const action = async ({ request }) => {
-  const formData = await request.formData()
-  // console.log(formData)
-  const data = Object.fromEntries(formData)
-  // console.log(data)
-
-  try {
-    await customFetch.post('/auth/register', data)
-    toast.success('Registration Successful')
-    return redirect('/login')
-  } catch (error) {
-    toast.error(error?.response?.data?.msg)
-    return error
-  }
-}
+import { FormInput, SubmitBtn } from '../components'
+import { Form, Link } from 'react-router-dom'
 
 const Register = () => {
   return (
-    <Wrapper>
-      <Form method="post" className="form">
-        <Logo />
-        <h4>register</h4>
-        <FormRow
+    <section className="h-screen grid place-items-center">
+      <Form
+        method="POST"
+        className="card w-96 p-8 bg-base-100 shadow-lg flex flex-col gap-y-4"
+      >
+        <h4 className="text-center text-3xl font-bold">Register</h4>
+        <FormInput
           type="text"
+          label="first name"
           name="firstName"
-          labelText="first name"
           defaultValue="ralu"
         />
-        <FormRow
+        <FormInput
           type="text"
+          label="last name"
           name="lastName"
-          labelText="last name"
           defaultValue="bri"
         />
-        {/* <FormRow type="text" name="location" defaultValue="bucharest" /> */}
-        <FormRow type="email" name="email" defaultValue="ralu@gmail.com" />
-        <FormRow type="password" name="password" defaultValue="secret" />
-        <SubmitBtn />
-        <p>
-          Already a member?
-          <Link to="/login" className="member-btn">
+        <FormInput
+          type="email"
+          label="email"
+          name="email"
+          defaultValue="ralu@gmail.com"
+        />
+        <FormInput
+          type="password"
+          label="password"
+          name="password"
+          defaultValue="secret"
+        />
+
+        <div className="mt-4">
+          <SubmitBtn text="REGISTER" />
+        </div>
+        <p className="text-center">
+          Already a member?{' '}
+          <Link
+            to="/login"
+            className="ml-2 link link-hover link-primary capitalize"
+          >
             Login
           </Link>
         </p>
       </Form>
-    </Wrapper>
+    </section>
   )
 }
 

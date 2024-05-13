@@ -65,4 +65,16 @@ export const deleteReview = async (req, res) => {
     .json({ msg: 'Review deleted successfully', review: deletedReview })
 }
 
-// TODO NODEJS: getSingleEventReviews
+export const getSingleEventReviews = async (req, res) => {
+  const { id: eventId } = req.params
+
+  const event = await prisma.events.findUnique({ where: { id: eventId } })
+  if (!event) throw new BadRequestError(`No event with id ${eventId}`)
+
+  const reviews = await prisma.reviews.findMany({
+    where: {
+      eventId,
+    },
+  })
+  res.status(StatusCodes.OK).json({ reviews, count: reviews.length })
+}

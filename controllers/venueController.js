@@ -55,4 +55,4 @@ export const deleteVenue = async (req, res) => {
     .json({ msg: 'Venue deleted successfully', venue: deletedVenue })
 }
 
-// TODO REACT: venue page visible only for admin and event_planner
+// TODO REACT: venue page + to be visible only for admin and event_planner

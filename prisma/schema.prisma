@@ -20,17 +20,21 @@ model Venues {
 }
 
 model Users {
-  id             String    @id @default(uuid())
-  firstName      String    @map("first_name")
-  lastName       String    @map("last_name")
-  avatar         String?
-  avatarPublicId String?   @map("avatar_id")
-  email          String    @unique
-  password       String
-  role           Role[]    @default([USER])
-  // ratings        Ratings[]
-  reviews        Reviews[]
-  events         Events[]
+  id                          String    @id @default(uuid())
+  firstName                   String    @map("first_name")
+  lastName                    String    @map("last_name")
+  avatar                      String?
+  avatarPublicId              String?   @map("avatar_id")
+  email                       String    @unique
+  password                    String
+  role                        Role[]    @default([USER])
+  reviews                     Reviews[]
+  events                      Events[]
+  verificationToken           String?   @map("verification_token")
+  isVerified                  Boolean?  @default(false) @map("is_verified")
+  verified                    DateTime?
+  passwordToken               String?   @map("password_token")
+  passwordTokenExpirationDate DateTime? @map("psd_token_exp")
 
   @@map("users")
 }
@@ -47,7 +51,6 @@ model Events {
   description   String?
   startDate     DateTime      @map("start_date")
   endDate       DateTime      @map("end_date")
-  // ratings       Ratings[]
   reviews       Reviews[]
   averageRating Float?        @default(0) @map("average_rating")
   venue         Venues?       @relation(fields: [venueId], references: [id], onDelete: SetNull)
@@ -77,36 +80,14 @@ enum EventCategory {
   HEALTH_AND_WELLNESS
 }
 
-// model Ratings {
-//   id          String @id @default(uuid())
-//   event       Events @relation(fields: [eventId], references: [id], onDelete: Cascade)
-//   eventId     String @map("event_id")
-//   value       Int
-//   createdBy   Users  @relation(fields: [createdById], references: [id], onDelete: Cascade)
-//   createdById String @map("created_by")
-
-//   @@map("ratings")
-// }
-
-// model Reviews {
-//   id          String @id @default(uuid())
-//   event       Events @relation(fields: [eventId], references: [id], onDelete: Cascade)
-//   eventId     String @map("event_id")
-//   content     String
-//   createdBy   Users  @relation(fields: [createdById], references: [id], onDelete: Cascade)
-//   createdById String @map("created_by")
-
-//   @@map("reviews")
-// }
-
 model Reviews {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   rating      Int
-  content     String
-  event       Events @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId     String @map("event_id")
-  createdBy   Users  @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  createdById String @map("created_by")
+  content     String?
+  event       Events  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId     String  @map("event_id")
+  createdBy   Users   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById String  @map("created_by")
 
   @@map("reviews")
 }

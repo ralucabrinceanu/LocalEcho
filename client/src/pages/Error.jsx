@@ -1,7 +1,5 @@
 import React from 'react'
-import { Link, useRouteError } from 'react-router-dom'
-import Wrapper from '../assets/wrappers/ErrorPage'
-import img from '../assets/images/not-found.svg'
+import { useRouteError, Link } from 'react-router-dom'
 
 const Error = () => {
   const error = useRouteError()
@@ -9,23 +7,29 @@ const Error = () => {
 
   if (error.status === 404) {
     return (
-      <Wrapper>
-        <div>
-          <img src={img} alt="not found" />
-          <h3>page not found </h3>
-          <p>we can't seem to find the page you are looking for</p>
-          <Link to="/dashboard">back home</Link>
+      <main className="grid min-h-[100vh] place-items-center px-8">
+        <div className="text-center">
+          <p className="text-9xl font-semibold text-primary">404</p>
+          <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
+            page not found
+          </h1>
+          <p className="mt-6 text-lg leading-7">
+            We couldn't find the page you're looking for
+          </p>
+          <div className="mt-10">
+            <Link to="/" className="btn btn-secondary">
+              go back home
+            </Link>
+          </div>
         </div>
-      </Wrapper>
+      </main>
     )
   }
 
   return (
-    <Wrapper>
-      <div>
-        <h3>something went wrong</h3>
-      </div>
-    </Wrapper>
+    <main className="grid min-h-[100vh] place-items-center px-8">
+      <h4 className="text-center font-bold text-4xl">there was an error</h4>
+    </main>
   )
 }
 

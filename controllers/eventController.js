@@ -5,6 +5,11 @@ import { PrismaClient } from '@prisma/client'
 import { EventStatus, EventCategory } from '@prisma/client'
 const prisma = new PrismaClient()
 
+// export const getAllEvents = async (req, res) => {
+//   const events = await prisma.events.findMany()
+//   res.status(StatusCodes.OK).json({ events })
+// }
+
 export const getAllEvents = async (req, res) => {
   const { search, eventStatus, eventCategory, sort } = req.query
   console.log('sort:', sort)
@@ -62,8 +67,8 @@ export const getAllEvents = async (req, res) => {
     orderBy: { [sortBy]: sortOrder },
     take: limit,
     skip: skip,
-    // take: 2,
-    // skip: 1,
+    take: 2,
+    skip: 1,
   })
 
   const totalEvents = await prisma.events.count({
@@ -73,9 +78,19 @@ export const getAllEvents = async (req, res) => {
 
   const numOfPages = Math.ceil(totalEvents / limit)
 
-  res
-    .status(StatusCodes.OK)
-    .json({ totalEvents, numOfPages, currentPage: page, events })
+  res.status(StatusCodes.OK).json({
+    meta: {
+      pagination: { totalEvents, numOfPages, currentPage: page },
+      categories: Object.values(EventCategory),
+      statusOptions: Object.values(EventStatus),
+    },
+    events,
+  })
+
+  // res.status(StatusCodes.OK).json({
+  //   meta: { totalEvents, numOfPages, currentPage: page },
+  //   events,
+  // })
 }
 
 export const createEvent = async (req, res) => {
@@ -173,38 +188,37 @@ export const deleteEvent = async (req, res) => {
 }
 
 export const updateEventStatus = async () => {
+  const currentDate = new Date()
+
   const currentEvents = await prisma.events.findMany({
     where: {
-      startDate: { lte: new Date() },
-      endDate: { gte: new Date() },
-      eventStatus: 'SCHEDULED',
+      AND: [
+        { startDate: { lte: currentDate } },
+        { endDate: { gte: currentDate } },
+      ],
     },
   })
 
-  await Promise.all(
-    currentEvents.map(async (event) => {
+  const overdueEvents = await prisma.events.findMany({
+    where: {
+      endDate: { lt: currentDate },
+    },
+  })
+
+  await Promise.all([
+    ...currentEvents.map(async (event) => {
       await prisma.events.update({
         where: { id: event.id },
         data: { eventStatus: 'RIGHT_NOW' },
       })
-    })
-  )
-
-  const overdueEvents = await prisma.events.findMany({
-    where: {
-      endDate: { lte: new Date() },
-      eventStatus: { in: ['COMPLETED', 'RIGHT_NOW'] },
-    },
-  })
-
-  await Promise.all(
-    overdueEvents.map(async (event) => {
+    }),
+    ...overdueEvents.map(async (event) => {
       await prisma.events.update({
         where: { id: event.id },
-        data: { eventStatus: 'COMPLETED' },
+        data: { eventStatus: 'CANCELLED' },
       })
-    })
-  )
+    }),
+  ])
 }
 setInterval(updateEventStatus, 60 * 1000)
 
@@ -231,44 +245,6 @@ export const showStats = async (req, res) => {
     ON_HOLD: formattedStats.ON_HOLD || 0,
   }
 
-  // const events = await prisma.events.findMany({
-  //   where: {
-  //     createdById: req.user.userId,
-  //   },
-  // })
-
-  // const monthlyEvents = {}
-
-  // events.forEach((event) => {
-  //   const startDate = new Date(event.startDate)
-  //   const year = startDate.getFullYear()
-  //   const month = startDate.getMonth() + 1
-
-  //   const key = `${year}-${month}`
-  //   if (monthlyEvents[key]) {
-  //     monthlyEvents[key] += 1
-  //   } else {
-  //     monthlyEvents[key] = 1
-  //   }
-  // })
-
-  // Sort monthlyEvents by year and month
-  // const sortedMonthlyEvents = Object.entries(monthlyEvents)
-  //   .sort(([keyA], [keyB]) => {
-  //     return keyB.localeCompare(keyA) // Sort in descending order
-  //   })
-  //   .slice(0, 6) // Take the latest 6 months
-  //   .map(([key, count]) => {
-  //     const [year, month] = key.split('-')
-  //     const date = dayjs()
-  //       .month(parseInt(month) - 1)
-  //       .year(parseInt(year))
-  //       .format('MMM YY')
-  //     return { date, count }
-  //   })
-  // console.log(sortedMonthlyEvents)
-
-  // v2
   const monthlyEvents = await prisma.$queryRaw`
     SELECT
       EXTRACT(YEAR FROM "start_date") AS "year",

@@ -9,6 +9,7 @@ import {
   deleteEvent,
   showStats,
 } from '../controllers/eventController.js'
+import { getSingleEventReviews } from '../controllers/reviewController.js'
 import { validateEventInput } from '../middleware/validation-middleware.js'
 import { authorizePermissions } from '../middleware/auth-middleware.js'
 
@@ -32,5 +33,7 @@ router
     updateEvent
   )
   .delete(authorizePermissions('ADMIN', 'EVENT_PLANNER'), deleteEvent)
+
+router.route('/:id/reviews').get(getSingleEventReviews)
 
 export default router

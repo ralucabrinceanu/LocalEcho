@@ -1,38 +1,24 @@
 import React from 'react'
-import { Router, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import {
+  About,
+  Error,
+  Events,
   HomeLayout,
   Landing,
-  Register,
   Login,
-  DashboardLayout,
-  Error,
-  AddEvent,
-  Stats,
-  AllEvents,
-  Profile,
-  Admin,
-  EditEvent,
+  Register,
+  SingleEvent,
 } from './pages'
 
-import { action as registerAction } from './pages/Register'
-import { action as loginAction } from './pages/Login'
-import { loader as dashboardLoader } from './pages/DashboardLayout'
-import { loader as allEventsLoader } from './pages/AllEvents'
-import { action as deleteEventAction } from './pages/DeleteEvent'
-import { loader as adminLoader } from './pages/Admin'
-import { action as profileAction } from './pages/Profile'
-import { action as addEventAction } from './pages/AddEvent'
-import { loader as editEventLoader } from './pages/EditEvent'
-import { action as editEventAction } from './pages/EditEvent'
-import { loader as statsLoader } from './pages/Stats'
+import { ErrorElement } from './components'
 
-export const checkDefaultTheme = () => {
-  const isDarkTheme = localStorage.getItem('darkTheme') === 'true'
-  document.body.classList.toggle('dark-theme', isDarkTheme)
-  return isDarkTheme
-}
-checkDefaultTheme()
+// loaders
+import { loader as landingLoader } from './pages/Landing'
+import { loader as singleEventLoader } from './pages/SingleEvent'
+import { loader as eventsLoader } from './pages/Events'
+
+// actions
 
 const router = createBrowserRouter([
   {
@@ -43,60 +29,36 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Landing />,
+        errorElement: <ErrorElement />,
+        loader: landingLoader,
       },
       {
-        path: 'register',
-        element: <Register />,
-        action: registerAction,
+        path: '/events',
+        element: <Events />,
+        errorElement: <ErrorElement />,
+        loader: eventsLoader,
       },
       {
-        path: 'login',
-        element: <Login />,
-        action: loginAction,
+        path: '/events/:id',
+        element: <SingleEvent />,
+        errorElement: <ErrorElement />,
+        loader: singleEventLoader,
       },
       {
-        path: 'dashboard',
-        element: <DashboardLayout />,
-        loader: dashboardLoader,
-        children: [
-          {
-            index: true,
-            element: <AddEvent />,
-            action: addEventAction,
-          },
-          {
-            path: 'stats',
-            element: <Stats />,
-            loader: statsLoader,
-          },
-          {
-            path: 'all-events',
-            element: <AllEvents />,
-            loader: allEventsLoader,
-          },
-          {
-            path: 'profile',
-            element: <Profile />,
-            action: profileAction,
-          },
-          {
-            path: 'admin',
-            element: <Admin />,
-            loader: adminLoader,
-          },
-          {
-            path: 'edit-event/:id',
-            element: <EditEvent />,
-            loader: editEventLoader,
-            action: editEventAction,
-          },
-          {
-            path: 'delete-event/:id',
-            action: deleteEventAction,
-          },
-        ],
+        path: '/about',
+        element: <About />,
       },
     ],
+  },
+  {
+    path: '/login',
+    element: <Login />,
+    errorElement: <Error />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+    errorElement: <Error />,
   },
 ])
 
@@ -105,9 +67,3 @@ const App = () => {
 }
 
 export default App
-
-// TODO NODEJS: crud user - delete account?, (review, ratings)
-// TODO NODEJS: 4 unit tests,
-// TODO NODEJS optional: OAuth
-
-// TODO REACT: add + edit venues, edit events

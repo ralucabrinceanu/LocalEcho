@@ -24,8 +24,6 @@ export const validateVenueInput = withValidationErrors([
   body('city').notEmpty().withMessage('city is required'),
 ])
 
-// TODO: validateIdParam
-
 export const validateRegisterInput = withValidationErrors([
   body('firstName').notEmpty().withMessage('firstName is required'),
   body('lastName').notEmpty().withMessage('lastName is required'),
@@ -98,19 +96,6 @@ export const validateEventInput = withValidationErrors([
     .withMessage('Invalid event category '),
 ])
 
-// export const validateRatingInput = withValidationErrors([
-//   body('eventId')
-//     .notEmpty()
-//     .withMessage('Event ID is required')
-//     .isUUID()
-//     .withMessage('Invalid event ID format'),
-//   body('value')
-//     .notEmpty()
-//     .withMessage('Rating value is required')
-//     .isInt({ min: 1, max: 5 })
-//     .withMessage('Rating value must be between 1 and 5'),
-// ])
-
 export const validateReviewInput = withValidationErrors([
   body('eventId')
     .notEmpty()
@@ -123,8 +108,7 @@ export const validateReviewInput = withValidationErrors([
     .isInt({ min: 1, max: 5 })
     .withMessage('Rating value must be between 1 and 5'),
   body('content')
-    .notEmpty()
-    .withMessage('Review content is required')
+    .optional()
     .isLength({ min: 10, max: 500 })
     .withMessage('Review content must be between 10 and 500 characters')
     .matches(/^[a-zA-Z0-9.,!? ]*$/)
@@ -138,8 +122,7 @@ export const validateReviewUpdateInput = withValidationErrors([
     .isInt({ min: 1, max: 5 })
     .withMessage('Rating value must be between 1 and 5'),
   body('content')
-    .notEmpty()
-    .withMessage('Review content is required')
+    .optional()
     .isLength({ min: 10, max: 500 })
     .withMessage('Review content must be between 10 and 500 characters')
     .matches(/^[a-zA-Z0-9.,!? ]*$/)

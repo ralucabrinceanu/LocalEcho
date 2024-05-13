@@ -1,46 +1,45 @@
 import React from 'react'
-import { Link, redirect, Form } from 'react-router-dom'
-import Wrapper from '../assets/wrappers/RegisterAndLoginPage'
-import { FormRow, Logo, SubmitBtn } from '../components'
-import customFetch from '../utils/customFetch'
-import { toast } from 'react-toastify'
-
-export const action = async ({ request }) => {
-  const formData = await request.formData()
-  const data = Object.fromEntries(formData) // email password
-  try {
-    await customFetch.post('/auth/login', data)
-    toast.success('Login Successful')
-    return redirect('/dashboard')
-  } catch (error) {
-    console.log(error)
-    toast.error(error?.response?.data?.msg)
-    return error
-  }
-}
+import { FormInput, SubmitBtn } from '../components'
+import { Form, Link } from 'react-router-dom'
 
 const Login = () => {
   return (
-    <Wrapper>
-      <Form method="post" className="form">
-        <Logo />
-        <h4>login</h4>
-        <FormRow type="email" name="email" defaultValue="ralu@gmail.com" />
-        <FormRow type="password" name="password" defaultValue="secret" />
+    <section className="h-screen grid place-items-center">
+      <Form
+        method="POST"
+        className="card w-96 p-8 bg-base-100 shadow-lg flex flex-col gap-y-4"
+      >
+        <h4 className="text-center text-3xl font-bold">Login</h4>
+        <FormInput
+          type="email"
+          label="Email"
+          name="email"
+          defaultValue="ralu@gmail.com"
+        />
+        <FormInput
+          type="password"
+          label="Password"
+          name="password"
+          defaultValue="secret"
+        />
 
-        <SubmitBtn />
-        <button type="button" className="btn btn-block">
-          explore the app
+        <div className="mt-4">
+          <SubmitBtn text="LOGIN" />
+        </div>
+        <button type="button" className="btn btn-secondary btn-block">
+          GUEST USER
         </button>
-
-        <p>
-          Not a member yet?
-          <Link to="/register" className="member-btn">
-            Register
+        <p className="text-center">
+          Not a member yet?{' '}
+          <Link
+            to="/register"
+            className="ml-2 link link-hover link-primary capitalize"
+          >
+            register
           </Link>
         </p>
       </Form>
-    </Wrapper>
+    </section>
   )
 }
 
