@@ -7,7 +7,6 @@ const EventsGrid = () => {
 
   const formatDate = (startDate, endDate) => {
     const options = { month: 'long', day: 'numeric', year: 'numeric' }
-    // return new Date(dateString).toLocaleDateString('en-US', options)
     const start = new Date(startDate).toLocaleDateString('en-US', options)
     const end = new Date(endDate).toLocaleDateString('en-US', options)
 
@@ -19,13 +18,14 @@ const EventsGrid = () => {
   }
 
   const currentDate = new Date()
-  const filteredEvents = events.filter(
-    (event) => new Date(event.startDate) > currentDate
-  )
+  const sortedAndFilteredEvents = events
+    .filter((event) => new Date(event.startDate) > currentDate)
+    .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+    .slice(0, 6)
 
   return (
     <div className="pt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {filteredEvents.map((event) => {
+      {sortedAndFilteredEvents.map((event) => {
         const { title, startDate, endDate } = event
         return (
           <Link

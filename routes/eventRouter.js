@@ -11,13 +11,17 @@ import {
 } from '../controllers/eventController.js'
 import { getSingleEventReviews } from '../controllers/reviewController.js'
 import { validateEventInput } from '../middleware/validation-middleware.js'
-import { authorizePermissions } from '../middleware/auth-middleware.js'
+import {
+  authorizePermissions,
+  authenticateUser,
+} from '../middleware/auth-middleware.js'
 
 router
   .route('/')
   .get(getAllEvents)
   .post(
     validateEventInput,
+    authenticateUser,
     authorizePermissions('ADMIN', 'EVENT_PLANNER'),
     createEvent
   )
@@ -29,10 +33,15 @@ router
   .get(getEvent)
   .patch(
     validateEventInput,
+    authenticateUser,
     authorizePermissions('ADMIN', 'EVENT_PLANNER'),
     updateEvent
   )
-  .delete(authorizePermissions('ADMIN', 'EVENT_PLANNER'), deleteEvent)
+  .delete(
+    authenticateUser,
+    authorizePermissions('ADMIN', 'EVENT_PLANNER'),
+    deleteEvent
+  )
 
 router.route('/:id/reviews').get(getSingleEventReviews)
 

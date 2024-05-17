@@ -2,7 +2,7 @@ export const nodemailerConfig = {
   host: 'smtp.ethereal.email',
   port: 587,
   auth: {
-    user: 'meta.deckow15@ethereal.email',
-    pass: 'ER4szAP3BZhHMa7Ghv',
+    user: 'giuseppe.koepp83@ethereal.email',
+    pass: 'tjrFhX3nHK7dqHszSD',
   },
 }

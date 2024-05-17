@@ -7,6 +7,7 @@ import {
   updateUser,
   updateUserPassword,
   updateUserRole,
+  deleteUser,
 } from '../controllers/userController.js'
 import {
   validateUpdateUserInput,
@@ -20,8 +21,8 @@ import upload from '../middleware/multer-middleware.js'
 
 router.get(
   '/all-users',
-  authenticateUser,
-  authorizePermissions('ADMIN'),
+  // authenticateUser,
+  // authorizePermissions('ADMIN'),
   getAllUsers
 )
 router.get('/current-user', authenticateUser, getCurrentUser)
@@ -42,5 +43,6 @@ router.patch(
   validateUserRoleInput,
   updateUserRole
 )
+router.delete('/delete-user/:id', deleteUser) // authenticateUser
 
 export default router

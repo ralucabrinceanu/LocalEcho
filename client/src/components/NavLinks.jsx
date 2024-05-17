@@ -1,20 +1,39 @@
 import React from 'react'
+import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 
 const links = [
   { id: 1, url: '/', text: 'home' },
   { id: 2, url: 'about', text: 'about' },
   { id: 3, url: 'events', text: 'events' },
+  { id: 4, url: 'events-crud', text: 'events crud' },
+  { id: 5, url: 'add-events', text: 'add-events' },
+  { id: 6, url: 'all-users', text: 'users' },
   //   { id: 4, url: 'cart', text: 'cart' },
   //   { id: 5, url: 'checkout', text: 'checkout' },
   //   { id: 6, url: 'orders', text: 'orders' },
 ]
 
 const NavLinks = () => {
+  const user = useSelector((state) => state.userState.user)
+
   return (
     <>
       {links.map((link) => {
         const { id, url, text } = link
+
+        //! restrictionare pagini
+        if (
+          (url === 'add-events' || url === 'events-crud') &&
+          (!user ||
+            (!user.role.includes('ADMIN') &&
+              !user.role.includes('EVENT_PLANNER')))
+        )
+          return null
+
+        if (url === 'all-users' && (!user || !user.role.includes('ADMIN')))
+          return null
+
         return (
           <li key={id}>
             <NavLink className="capitalize" to={url}>

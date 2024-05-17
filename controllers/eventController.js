@@ -5,32 +5,16 @@ import { PrismaClient } from '@prisma/client'
 import { EventStatus, EventCategory } from '@prisma/client'
 const prisma = new PrismaClient()
 
-// export const getAllEvents = async (req, res) => {
-//   const events = await prisma.events.findMany()
-//   res.status(StatusCodes.OK).json({ events })
-// }
-
 export const getAllEvents = async (req, res) => {
-  const { search, eventStatus, eventCategory, sort } = req.query
-  console.log('sort:', sort)
-  const queryObject = {
-    // createdById: req.user.userId,
-    // AM COMENTAT ASTA CA NU AFISA TOATE EVEN
-  }
+  const { search, eventCategory, sort, rightnow, city } = req.query
+  // console.log('sort:', sort)
+  const queryObject = {}
 
   if (search) {
     queryObject.OR = [
       { title: { contains: search, mode: 'insensitive' } },
       { description: { contains: search, mode: 'insensitive' } },
     ]
-  }
-
-  if (
-    eventStatus &&
-    eventStatus !== 'all' &&
-    Object.values(EventStatus).includes(eventStatus)
-  ) {
-    queryObject.eventStatus = eventStatus
   }
 
   if (
@@ -41,59 +25,94 @@ export const getAllEvents = async (req, res) => {
     queryObject.eventCategory = eventCategory
   }
 
-  const sortOptions = {
-    startDat: 'startDate',
-    endDat: 'endDate',
-    'a-z': 'eventCategory',
-    'z-a': 'eventCategory',
+  // checkbox
+  if (rightnow === 'on') {
+    const currentDate = new Date()
+    queryObject.startDate = { lte: currentDate }
+    queryObject.endDate = { gte: currentDate }
   }
-  const sortDirections = {
-    endDat: 'desc',
-    'a-z': 'asc',
-    'z-a': 'desc',
+
+  // const sortOptions = {
+  //   startDat: 'startDate',
+  //   endDat: 'endDate',
+  //   'a-z': 'eventCategory',
+  //   'z-a': 'eventCategory',
+  // }
+  // const sortDirections = {
+  //   endDat: 'desc',
+  //   'a-z': 'asc',
+  //   'z-a': 'desc',
+  // }
+  // const sortBy = sortOptions[sort] || sortOptions.startDat
+  // console.log('sort by: ', sortBy)
+  // const sortOrder = sortDirections[sort] || 'asc'
+  // console.log('sort order: ', sortOrder)
+
+  // get cities
+  const cities = await prisma.venues.findMany({
+    distinct: ['city'],
+    select: {
+      city: true,
+    },
+  })
+  const cityNames = cities.map((venue) => venue.city)
+  const citiesWithAllOption = ['all', ...cityNames]
+
+  if (city && city !== 'all' && citiesWithAllOption.includes(city)) {
+    const venuesInCity = await prisma.venues.findMany({
+      where: {
+        city: city,
+      },
+      select: {
+        id: true,
+      },
+    })
+    // console.log(venuesInCity)
+    const venueIds = venuesInCity.map((venue) => venue.id)
+    // console.log(venueIds)
+    if (venueIds.length > 0) {
+      queryObject.venueId = {
+        in: venueIds,
+      }
+    } else {
+      queryObject.venueId = {
+        in: [],
+      }
+    }
+    // console.log(queryObject)
   }
-  const sortBy = sortOptions[sort] || sortOptions.startDat
-  console.log('sort by: ', sortBy)
-  const sortOrder = sortDirections[sort] || 'asc'
-  console.log('sort order: ', sortOrder)
 
   // setup pagination
   const page = Number(req.query.page) || 1
-  const limit = Number(req.query.limit) || 5
+  const limit = Number(req.query.limit) || 9
   const skip = (page - 1) * limit
 
   const events = await prisma.events.findMany({
     where: queryObject,
-    orderBy: { [sortBy]: sortOrder },
+    // orderBy: { [sortBy]: sortOrder },
     take: limit,
     skip: skip,
-    take: 2,
-    skip: 1,
   })
 
   const totalEvents = await prisma.events.count({
     where: queryObject,
   })
-  console.log('total events:', totalEvents)
+  // console.log('total events:', totalEvents)
 
   const numOfPages = Math.ceil(totalEvents / limit)
 
   res.status(StatusCodes.OK).json({
     meta: {
       pagination: { totalEvents, numOfPages, currentPage: page },
-      categories: Object.values(EventCategory),
-      statusOptions: Object.values(EventStatus),
+      categories: ['all', ...Object.values(EventCategory)],
+      cities: citiesWithAllOption,
     },
     events,
   })
-
-  // res.status(StatusCodes.OK).json({
-  //   meta: { totalEvents, numOfPages, currentPage: page },
-  //   events,
-  // })
 }
 
 export const createEvent = async (req, res) => {
+  console.log('TOP')
   const {
     title,
     description,
@@ -215,7 +234,7 @@ export const updateEventStatus = async () => {
     ...overdueEvents.map(async (event) => {
       await prisma.events.update({
         where: { id: event.id },
-        data: { eventStatus: 'CANCELLED' },
+        data: { eventStatus: 'COMPLETED' },
       })
     }),
   ])

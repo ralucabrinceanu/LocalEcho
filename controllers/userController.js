@@ -13,7 +13,23 @@ import { comparePassword, hashPassword } from '../utils/passwordUtils.js'
 const prisma = new PrismaClient()
 
 export const getAllUsers = async (req, res) => {
-  const users = await prisma.users.findMany()
+  const { search, sort } = req.query
+  const queryObject = {}
+
+  if (search) {
+    queryObject.OR = [
+      { firstName: { contains: search, mode: 'insensitive' } },
+      { lastName: { contains: search, mode: 'insensitive' } },
+      { email: { contains: search, mode: 'insensitive' } },
+    ]
+  }
+
+  const order = sort === 'asc' ? 'asc' : 'desc'
+  const users = await prisma.users.findMany({
+    where: queryObject,
+    orderBy: { verified: order },
+  })
+
   res.status(StatusCodes.OK).json({ users })
 }
 
@@ -92,4 +108,16 @@ export const updateUserRole = async (req, res) => {
   res
     .status(StatusCodes.OK)
     .json({ msg: 'User role updated successfully', user: userWithoutPassword })
+}
+
+export const deleteUser = async (req, res) => {
+  const { id } = req.params
+
+  const user = await prisma.users.findUnique({
+    where: { id },
+  })
+  if (!user) throw new BadRequestError(`No user with id ${id}`)
+
+  const deletedUser = await prisma.users.delete({ where: { id } })
+  res.status(StatusCodes.OK).json({ msg: 'User deleted successfully' })
 }

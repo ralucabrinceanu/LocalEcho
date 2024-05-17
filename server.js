@@ -57,7 +57,7 @@ app.use('/project/venues', venueRouter)
 app.use('/project/auth', authRouter)
 app.use('/project/events', eventRouter) // SCHIMBARE: authenticateUser
 app.use('/project/reviews', authenticateUser, reviewRouter)
-app.use('/project/users', authenticateUser, userRouter)
+app.use('/project/users', userRouter) //authenticateUser
 
 app.use('*', (req, res) => {
   res.status(404).json({ msg: 'not found' })

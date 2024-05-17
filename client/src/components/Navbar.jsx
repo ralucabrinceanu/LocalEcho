@@ -1,41 +1,22 @@
-import React, { useEffect, useState } from 'react'
 import { BsMoonFill, BsSunFill } from 'react-icons/bs'
 import { FaBarsStaggered } from 'react-icons/fa6'
 import { NavLink } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
 import NavLinks from './NavLinks'
-
-const themes = {
-  cupcake: 'cupcake',
-  sunset: 'sunset',
-}
-
-const getThemeFromLocalStorage = () => {
-  return localStorage.getItem('theme') || themes.cupcake
-}
+import { toggleTheme } from '../features/user/userSlice'
 
 const Navbar = () => {
-  const [theme, setTheme] = useState(getThemeFromLocalStorage())
-
+  const dispatch = useDispatch()
   const handleTheme = () => {
-    const { cupcake, sunset } = themes
-    const newTheme = theme === cupcake ? sunset : cupcake
-    setTheme(newTheme)
+    dispatch(toggleTheme())
   }
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme)
-    localStorage.setItem('theme', theme)
-  }, [theme])
 
   return (
     <nav className="bg-base-200">
       <div className="navbar align-element">
         <div className="navbar-start">
-          <NavLink
-            to="/"
-            className="hidden lg:flex btn btn-primary text-3xl items-center"
-          >
-            LE
+          <NavLink to="/" className="hidden lg:flex text-3xl items-center">
+            Local Echo
           </NavLink>
           <div className="dropdown">
             <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -61,8 +42,6 @@ const Navbar = () => {
             <BsSunFill className="swap-on h-4 w-4" />
             <BsMoonFill className="swap-off h-4 w-4" />
           </label>
-
-          {/* //TODO CART LINK */}
         </div>
       </div>
     </nav>

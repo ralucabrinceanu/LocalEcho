@@ -28,7 +28,7 @@ const EventsList = () => {
             <div className="ml-0 sm:ml-16">
               <h3 className="capitalize font-medium text-lg">{title}</h3>
               <h4 className="capitalize text-sm text-neutral-content">
-                Created by: event_creator
+                Created by:
               </h4>
             </div>
             <h4 className="font-medium ml-0 sm:ml-auto text-lg">venue_city</h4>
