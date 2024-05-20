@@ -63,7 +63,7 @@ const EditEvent = () => {
 
         <div className="col-span-2 text-center">
           <div className="mt-4">
-            <SubmitBtn text="ADD" />
+            <button>edit</button>
           </div>
         </div>
       </Form>
@@ -72,3 +72,5 @@ const EditEvent = () => {
 }
 
 export default EditEvent
+
+// TODO edit event

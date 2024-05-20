@@ -5,17 +5,16 @@ import { redirect } from 'react-router-dom'
 
 export const action = async ({ params }) => {
   try {
-    await customFetch.delete(`users/delete-user/${params.id}`)
-    toast.success('User deleted successfully')
-    return redirect('/users')
+    await customFetch.delete(`venues/${params.id}`)
+    toast.success('Venue deleted successfully')
   } catch (error) {
     toast.error(error?.response?.data?.msg)
-    return redirect('/')
   }
+  return redirect('/venues')
 }
 
-const DeleteUser = () => {
-  return <div>delete user</div>
+const DeleteVenue = () => {
+  return <div>delete venue</div>
 }
 
-export default DeleteUser
+export default DeleteVenue

@@ -10,10 +10,18 @@ const EventsList = () => {
     return new Date(dateString).toLocaleDateString('en-US', options)
   }
 
+  const truncateDescription = (description) => {
+    const words = description.split(' ')
+    if (words.length > 15) {
+      return words.slice(0, 15).join(' ') + '...'
+    }
+    return description
+  }
+
   return (
     <div className="mt-12 grid gap-y-8">
       {events.map((event) => {
-        const { title, startDate } = event
+        const { title, description } = event
         return (
           <Link
             key={event.id}
@@ -28,7 +36,7 @@ const EventsList = () => {
             <div className="ml-0 sm:ml-16">
               <h3 className="capitalize font-medium text-lg">{title}</h3>
               <h4 className="capitalize text-sm text-neutral-content">
-                Created by:
+                {truncateDescription(description)}
               </h4>
             </div>
             <h4 className="font-medium ml-0 sm:ml-auto text-lg">venue_city</h4>

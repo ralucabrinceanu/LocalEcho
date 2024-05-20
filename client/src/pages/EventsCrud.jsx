@@ -32,12 +32,20 @@ const EventsCrud = () => {
           defaultValue={search}
         />
         <button type="submit" className="btn btn-primary btn-sm">
-          search
+          Search
         </button>
         <Link to="/events-crud" className="btn btn-accent btn-sm">
-          reset
+          Reset
         </Link>
       </Form>
+
+      <Link to={'/add-venue'} className="btn glass mt-4 mr-4">
+        Add Venue
+      </Link>
+      <Link to={'/add-event'} className="btn glass mt-4">
+        Add Event
+      </Link>
+
       <div>
         {totalEvents === 0 ? (
           <h5 className="text-2xl mt-16">No events matched your search...</h5>
@@ -74,7 +82,7 @@ const EventsCrud = () => {
                         to={`/events-crud/edit-event/${id}`}
                         className="btn btn-primary mr-2"
                       >
-                        edit
+                        Edit
                       </Link>
                       <Form
                         method="post"

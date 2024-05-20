@@ -39,10 +39,10 @@ const AllUsers = () => {
         />
 
         <button type="submit" className="btn btn-primary btn-sm">
-          search
+          Search
         </button>
-        <Link to="/all-users" className="btn btn-accent btn-sm">
-          reset
+        <Link to="/users" className="btn btn-accent btn-sm">
+          Reset
         </Link>
       </Form>
 
@@ -52,6 +52,7 @@ const AllUsers = () => {
             <tr>
               <th>Id</th>
               <th>Email</th>
+              <th>Verified Account </th>
               <th>Role</th>
               <th>Change Role</th>
               <th>Actions</th>
@@ -62,6 +63,7 @@ const AllUsers = () => {
               <tr key={user.id}>
                 <td>{index + 1}</td>
                 <td>{user.email}</td>
+                <td>{user.isVerified ? 'Yes' : 'No'}</td>
                 <td>{user.role} </td>
 
                 <td>
@@ -101,10 +103,7 @@ const AllUsers = () => {
                 </td>
 
                 <td>
-                  <Form
-                    method="post"
-                    action={`/all-users/delete-user/${user.id}`}
-                  >
+                  <Form method="post" action={`/users/delete-user/${user.id}`}>
                     <button
                       type="submit"
                       className="btn btn-outline btn-secondary"

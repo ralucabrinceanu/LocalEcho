@@ -13,12 +13,24 @@ const Header = () => {
     dispatch(logoutUser())
   }
 
+  const handleUpdateProfile = () => {
+    navigate('/update-profile')
+  }
+
+  const initials = user ? `${user.firstName[0]}${user.lastName[0]}` : ''
+
   return (
     <header className="bg-neutral py-2 text-neutral-content">
       <div className="align-element flex justify center sm:justify-end">
         {user ? (
           <div className="flex gap-x-2 sm:gap-x-8 items-center">
-            <p className="text-xs sm:text-sm">Hello, {user.firstName}</p>
+            {/* <p className="text-xs sm:text-sm">Hello, {user.firstName}</p> */}
+            <button
+              className="btn btn-xs btn-outline btn-secondary"
+              onClick={handleUpdateProfile}
+            >
+              {initials.toUpperCase()}
+            </button>
             <button
               className="btn btn-xs btn-outline btn-primary"
               onClick={handleLogout}
@@ -29,7 +41,7 @@ const Header = () => {
         ) : (
           <div className="flex gap-x-6 justify-center items-center">
             <Link to="/login" className="link link-hover text-xs sm:text-sm">
-              Sign in / Guest
+              Sign in
             </Link>
             <Link to="/register" className="link link-hover text-xs sm:text-sm">
               Create Account
@@ -40,24 +52,5 @@ const Header = () => {
     </header>
   )
 }
-
-// const Header = () => {
-//   return (
-//     <header className="bg-neutral py-2 text-neutral-content">
-//       <div className="align-element flex justify center sm:justify-end">
-//         {/* USER */}
-//         {/* LINKS */}
-//         <div className="flex gap-x-6 justify-center items-center">
-//           <Link to="/login" className="link link-hover text-xs sm:text-sm">
-//             Sign in / Guest
-//           </Link>
-//           <Link to="/register" className="link link-hover text-xs sm:text-sm">
-//             Create Account
-//           </Link>
-//         </div>
-//       </div>
-//     </header>
-//   )
-// }
 
 export default Header

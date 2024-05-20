@@ -6,12 +6,21 @@ import { SubmitBtn } from '../components'
 import { EventCategory } from '@prisma/client'
 import customFetch from '../utils'
 import { toast } from 'react-toastify'
+// import { useSelector } from 'react-redux'
 
 export const action = async ({ request }) => {
+  // const token = store.getState().userState.user.token
+  // console.log(token)
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
   console.log(data)
   try {
+    // const response = await customFetch.post('/events', data, {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //     'Content-Type': 'application/json',
+    //   },
+    // })
     const response = await customFetch.post('/events', data)
     toast.success('event added successfully')
   } catch (error) {
@@ -23,6 +32,7 @@ export const action = async ({ request }) => {
 }
 
 const AddEvents = () => {
+  // const user = useSelector((state) => state.userState.user)
   //! nu gasesc userul
   const [venues, setVenues] = useState([])
   useEffect(() => {

@@ -21,7 +21,7 @@ const Hero = () => {
         </p>
         <div className="mt-10">
           <Link to="/events" className="btn btn-primary">
-            next events
+            our events
           </Link>
         </div>
       </div>

@@ -41,11 +41,32 @@ export const getCurrentUser = async (req, res) => {
 
 export const getApplicationStats = async (req, res) => {
   const users = await prisma.users.count()
-  const events = await prisma.events.count()
-  const venues = await prisma.venues.count()
+  // const events = await prisma.events.count()
+  const completedEvents = await prisma.events.count({
+    where: {
+      eventStatus: 'COMPLETED',
+    },
+  })
+  const scheduledEvents = await prisma.events.count({
+    where: {
+      eventStatus: 'SCHEDULED',
+    },
+  })
+  const liveEvents = await prisma.events.count({
+    where: {
+      eventStatus: 'RIGHT_NOW',
+    },
+  })
+
   res
     .status(StatusCodes.OK)
-    .json({ msg: 'application stats', users, events, venues })
+    .json({
+      msg: 'application stats',
+      users,
+      completedEvents,
+      scheduledEvents,
+      liveEvents,
+    })
 }
 
 export const updateUser = async (req, res) => {

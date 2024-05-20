@@ -10,8 +10,18 @@ export const getAllVenues = async (req, res) => {
 
 export const createVenue = async (req, res) => {
   const { name, address, capacity, city, zipCode } = req.body
+  // console.log(req.user)
+  req.body.createdById = req.user.userId
+
   const venue = await prisma.venues.create({
-    data: { name, address, capacity, city, zipCode },
+    data: {
+      name,
+      address,
+      capacity,
+      city,
+      zipCode,
+      createdById: req.body.createdById,
+    },
   })
   res.status(StatusCodes.CREATED).json({ venue })
 }

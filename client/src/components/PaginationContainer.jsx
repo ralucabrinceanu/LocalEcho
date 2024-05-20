@@ -5,8 +5,6 @@ import {
   useLoaderData,
   useNavigation,
 } from 'react-router-dom'
-import { MdNavigateNext } from 'react-icons/md'
-import { GrFormPrevious } from 'react-icons/gr'
 
 const PaginationContainer = () => {
   const { meta } = useLoaderData()
@@ -41,7 +39,7 @@ const PaginationContainer = () => {
           handlePageChange(prevPage)
         }}
       >
-        <GrFormPrevious /> Prev
+        « Prev
       </button>
 
       {pages.map((pageNumber) => {
@@ -66,7 +64,7 @@ const PaginationContainer = () => {
           handlePageChange(nextPage)
         }}
       >
-        Next <MdNavigateNext />
+        Next »
       </button>
     </div>
   )

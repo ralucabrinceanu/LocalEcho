@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 import theatre from '../assets/theatre.jpg'
+import { EventStatus } from '@prisma/client'
 
 const EventsGridAll = () => {
   const { events } = useLoaderData()
@@ -10,9 +11,13 @@ const EventsGridAll = () => {
     return new Date(dateString).toLocaleDateString('en-US', options)
   }
 
+  const visibleEvents = events.filter(
+    (event) => event.eventStatus !== 'COMPLETED'
+  )
+
   return (
     <div className="pt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {events.map((event) => {
+      {visibleEvents.map((event) => {
         const { title, startDate } = event
         return (
           <Link

@@ -25,11 +25,14 @@ router.get(
   // authorizePermissions('ADMIN'),
   getAllUsers
 )
-router.get('/current-user', authenticateUser, getCurrentUser)
-router.get('/admin/app-stats', [
-  authorizePermissions('ADMIN'),
-  getApplicationStats,
-])
+router.get('/current-user', authenticateUser, getCurrentUser) // authenticate
+// router.get('/admin/app-stats', authenticateUser, [
+//   authorizePermissions('ADMIN'),
+//   getApplicationStats,
+// ])
+
+router.get('/admin/app-stats', getApplicationStats)
+
 router.patch(
   '/update-user',
   upload.single('avatar'),
@@ -39,6 +42,7 @@ router.patch(
 router.patch('/updateUserPassword', authenticateUser, updateUserPassword)
 router.patch(
   '/update-user-role',
+  authenticateUser,
   authorizePermissions('ADMIN'),
   validateUserRoleInput,
   updateUserRole
@@ -46,3 +50,5 @@ router.patch(
 router.delete('/delete-user/:id', deleteUser) // authenticateUser
 
 export default router
+
+//TODO: verifica rutele !!!

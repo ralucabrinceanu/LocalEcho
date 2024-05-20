@@ -6,9 +6,8 @@ const links = [
   { id: 1, url: '/', text: 'home' },
   { id: 2, url: 'about', text: 'about' },
   { id: 3, url: 'events', text: 'events' },
-  { id: 4, url: 'events-crud', text: 'events crud' },
-  { id: 5, url: 'add-events', text: 'add-events' },
-  { id: 6, url: 'all-users', text: 'users' },
+  { id: 4, url: 'admin', text: 'admin' },
+  { id: 5, url: 'event-planner', text: 'event planner' },
   //   { id: 4, url: 'cart', text: 'cart' },
   //   { id: 5, url: 'checkout', text: 'checkout' },
   //   { id: 6, url: 'orders', text: 'orders' },
@@ -22,16 +21,14 @@ const NavLinks = () => {
       {links.map((link) => {
         const { id, url, text } = link
 
-        //! restrictionare pagini
         if (
-          (url === 'add-events' || url === 'events-crud') &&
-          (!user ||
-            (!user.role.includes('ADMIN') &&
-              !user.role.includes('EVENT_PLANNER')))
+          url === 'event-planner' &&
+          (!user || !user.role.includes('EVENT_PLANNER'))
         )
           return null
 
-        if (url === 'all-users' && (!user || !user.role.includes('ADMIN')))
+        if (url === 'admin' && (!user || !user.role.includes('ADMIN')))
+          //! restrictionare pagini
           return null
 
         return (

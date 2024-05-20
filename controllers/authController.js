@@ -11,6 +11,7 @@ import { createJWT } from '../utils/tokenUtils.js'
 import { sendVerificationEmail } from '../utils/sendVerificationEmail.js'
 import { sendResetPasswordEmail } from '../utils/sendResetPasswordEmail.js'
 import hashString from '../utils/createHash.js'
+import { token } from 'morgan'
 
 export const register = async (req, res) => {
   const { firstName, lastName, email, password } = req.body

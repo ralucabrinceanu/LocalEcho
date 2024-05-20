@@ -8,13 +8,15 @@ datasource db {
 }
 
 model Venues {
-  id       String   @id @default(uuid())
-  name     String
-  address  String
-  capacity Int
-  city     String
-  zipCode  String?  @map("zip_code")
-  events   Events[]
+  id          String   @id @default(uuid())
+  name        String
+  address     String
+  capacity    Int
+  city        String
+  zipCode     String?  @map("zip_code")
+  events      Events[]
+  createdBy   Users?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?  @map("created_by")
 
   @@map("venues")
 }
@@ -35,6 +37,7 @@ model Users {
   verified                    DateTime?
   passwordToken               String?   @map("password_token")
   passwordTokenExpirationDate DateTime? @map("psd_token_exp")
+  Venues                      Venues[]
 
   @@map("users")
 }
@@ -82,7 +85,7 @@ enum EventCategory {
 
 model Reviews {
   id          String  @id @default(uuid())
-  rating      Int
+  rating      Int?
   content     String?
   event       Events  @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId     String  @map("event_id")

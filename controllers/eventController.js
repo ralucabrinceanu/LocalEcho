@@ -112,7 +112,6 @@ export const getAllEvents = async (req, res) => {
 }
 
 export const createEvent = async (req, res) => {
-  console.log('TOP')
   const {
     title,
     description,

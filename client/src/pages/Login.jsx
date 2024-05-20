@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import customFetch from '../utils'
 import { FormInput, SubmitBtn } from '../components'
 import { loginUser } from '../features/user/userSlice'
+import Cookies from 'js-cookie'
 
 export const action =
   (store) =>
@@ -17,12 +18,15 @@ export const action =
       const response = await customFetch.post('/auth/login', data)
       // console.log(response)
       store.dispatch(loginUser(response.data))
-      toast.success('logged in successfully')
+      toast.success('Logged in successfully')
+      Cookies.set('tokenName', response.data.token, {
+        expires: 7,
+      })
       return redirect('/')
     } catch (error) {
       console.log(error.response.data.msg)
       const errorMessage =
-        error?.response?.data?.msg || 'please double check your credentials'
+        error?.response?.data?.msg || 'Please double check your credentials'
       toast.error(errorMessage)
       return null
     }

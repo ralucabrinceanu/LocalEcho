@@ -13,6 +13,12 @@ import {
   EventsCrud,
   EditEvent,
   AllUsers,
+  Profile,
+  Verify,
+  Venues,
+  AddVenue,
+  Admin,
+  EventPlanner,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -25,6 +31,8 @@ import { loader as eventsLoader } from './pages/Events'
 import { loader as eventsCrudLoader } from './pages/EventsCrud'
 import { loader as editEventLoader } from './pages/EditEvent'
 import { loader as usersLoader } from './pages/Users'
+import { loader as venuesLoader } from './pages/Venues'
+// import { loader as updateUserLoader } from './pages/Profile'
 
 // actions
 import { action as registerAction } from './pages/Register'
@@ -33,6 +41,9 @@ import { action as addEventAction } from './pages/AddEvents'
 import { action as deleteEventAction } from './pages/DeleteEvent'
 import { action as editEventAction } from './pages/EditEvent'
 import { action as deleteUserAction } from './pages/DeleteUser'
+import { action as updateUserAction } from './pages/Profile'
+import { action as addVenueAction } from './pages/AddVenue'
+import { action as deleteVenueAction } from './pages/DeleteVenue'
 
 const router = createBrowserRouter([
   {
@@ -53,6 +64,16 @@ const router = createBrowserRouter([
         loader: eventsLoader,
       },
       {
+        path: '/admin',
+        element: <Admin />,
+        errorElement: <ErrorElement />,
+      },
+      {
+        path: '/event-planner',
+        element: <EventPlanner />,
+        errorElement: <ErrorElement />,
+      },
+      {
         path: '/events-crud',
         element: <EventsCrud />,
         errorElement: <ErrorElement />,
@@ -71,7 +92,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'all-users',
+        path: 'users',
         element: <AllUsers />,
         loader: usersLoader,
         children: [
@@ -95,10 +116,28 @@ const router = createBrowserRouter([
         element: <About />,
       },
       {
-        path: '/add-events',
+        path: '/add-event',
         element: <AddEvents />,
         errorElement: <ErrorElement />,
         action: addEventAction,
+      },
+      {
+        path: '/venues',
+        element: <Venues />,
+        errorElement: <ErrorElement />,
+        loader: venuesLoader,
+        children: [
+          {
+            path: 'delete-venue/:id',
+            action: deleteVenueAction,
+          },
+        ],
+      },
+      {
+        path: '/add-venue',
+        element: <AddVenue />,
+        errorElement: <ErrorElement />,
+        action: addVenueAction,
       },
     ],
   },
@@ -113,6 +152,18 @@ const router = createBrowserRouter([
     element: <Register />,
     errorElement: <Error />,
     action: registerAction,
+  },
+  {
+    path: '/update-profile',
+    element: <Profile />,
+    errorElement: <Error />,
+    // loader: updateUserLoader,
+    action: updateUserAction,
+  },
+
+  {
+    path: '/user/verify-email',
+    element: <Verify />,
   },
 ])
 
