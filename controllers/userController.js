@@ -58,15 +58,13 @@ export const getApplicationStats = async (req, res) => {
     },
   })
 
-  res
-    .status(StatusCodes.OK)
-    .json({
-      msg: 'application stats',
-      users,
-      completedEvents,
-      scheduledEvents,
-      liveEvents,
-    })
+  res.status(StatusCodes.OK).json({
+    msg: 'application stats',
+    users,
+    completedEvents,
+    scheduledEvents,
+    liveEvents,
+  })
 }
 
 export const updateUser = async (req, res) => {

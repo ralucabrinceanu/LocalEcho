@@ -19,6 +19,8 @@ import {
   AddVenue,
   Admin,
   EventPlanner,
+  ForgotPassword,
+  ResetPassword,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -32,7 +34,8 @@ import { loader as eventsCrudLoader } from './pages/EventsCrud'
 import { loader as editEventLoader } from './pages/EditEvent'
 import { loader as usersLoader } from './pages/Users'
 import { loader as venuesLoader } from './pages/Venues'
-// import { loader as updateUserLoader } from './pages/Profile'
+import { loader as verifyEmailLoader } from './pages/Verify'
+import { loader as resetPasswordLoader } from './pages/ResetPassword'
 
 // actions
 import { action as registerAction } from './pages/Register'
@@ -41,9 +44,11 @@ import { action as addEventAction } from './pages/AddEvents'
 import { action as deleteEventAction } from './pages/DeleteEvent'
 import { action as editEventAction } from './pages/EditEvent'
 import { action as deleteUserAction } from './pages/DeleteUser'
-import { action as updateUserAction } from './pages/Profile'
+import { action as profileAction } from './pages/Profile'
 import { action as addVenueAction } from './pages/AddVenue'
 import { action as deleteVenueAction } from './pages/DeleteVenue'
+import { action as forgotPasswordAction } from './pages/ForgotPassword'
+// import { action as resetPasswordAction } from './pages/ResetPassword'
 
 const router = createBrowserRouter([
   {
@@ -157,13 +162,23 @@ const router = createBrowserRouter([
     path: '/update-profile',
     element: <Profile />,
     errorElement: <Error />,
-    // loader: updateUserLoader,
-    action: updateUserAction,
+    action: profileAction,
   },
-
   {
     path: '/user/verify-email',
     element: <Verify />,
+    loader: verifyEmailLoader,
+  },
+  {
+    path: '/user/reset-password',
+    element: <ResetPassword />,
+    loader: resetPasswordLoader,
+    // action: resetPasswordAction,
+  },
+  {
+    path: '/user/forgot-password',
+    element: <ForgotPassword />,
+    action: forgotPasswordAction,
   },
 ])
 

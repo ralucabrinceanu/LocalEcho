@@ -1,11 +1,9 @@
 import React from 'react'
-import { Form, Link, redirect, useNavigate } from 'react-router-dom'
+import { Form, Link, redirect } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useDispatch } from 'react-redux'
 import customFetch from '../utils'
 import { FormInput, SubmitBtn } from '../components'
 import { loginUser } from '../features/user/userSlice'
-import Cookies from 'js-cookie'
 
 export const action =
   (store) =>
@@ -19,9 +17,6 @@ export const action =
       // console.log(response)
       store.dispatch(loginUser(response.data))
       toast.success('Logged in successfully')
-      Cookies.set('tokenName', response.data.token, {
-        expires: 7,
-      })
       return redirect('/')
     } catch (error) {
       console.log(error.response.data.msg)
@@ -66,6 +61,15 @@ const Login = () => {
             className="ml-2 link link-hover link-primary capitalize"
           >
             register
+          </Link>
+        </p>
+        <p className="text-center">
+          Forgot your password?
+          <Link
+            to="/user/forgot-password"
+            className="ml-2 link link-hover link-primary capitalize"
+          >
+            reset
           </Link>
         </p>
       </Form>

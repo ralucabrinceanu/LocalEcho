@@ -35,6 +35,7 @@ router.get('/admin/app-stats', getApplicationStats)
 
 router.patch(
   '/update-user',
+  authenticateUser,
   upload.single('avatar'),
   validateUpdateUserInput,
   updateUser
