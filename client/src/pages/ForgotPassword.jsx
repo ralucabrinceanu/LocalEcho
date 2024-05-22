@@ -2,7 +2,6 @@ import React from 'react'
 import { Form, redirect } from 'react-router-dom'
 import { FormInput, SubmitBtn } from '../components'
 import customFetch from '../utils'
-import { toast } from 'react-toastify'
 
 export const action = async ({ request }) => {
   const formData = await request.formData()

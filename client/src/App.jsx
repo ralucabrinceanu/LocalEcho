@@ -48,7 +48,7 @@ import { action as profileAction } from './pages/Profile'
 import { action as addVenueAction } from './pages/AddVenue'
 import { action as deleteVenueAction } from './pages/DeleteVenue'
 import { action as forgotPasswordAction } from './pages/ForgotPassword'
-// import { action as resetPasswordAction } from './pages/ResetPassword'
+import { action as resetPasswordAction } from './pages/ResetPassword'
 
 const router = createBrowserRouter([
   {
@@ -173,7 +173,7 @@ const router = createBrowserRouter([
     path: '/user/reset-password',
     element: <ResetPassword />,
     loader: resetPasswordLoader,
-    // action: resetPasswordAction,
+    action: resetPasswordAction,
   },
   {
     path: '/user/forgot-password',

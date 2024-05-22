@@ -106,6 +106,7 @@ export const forgotPassword = async (req, res) => {
   if (!email) throw new BadRequestError('Please provide valid email')
 
   const user = await prisma.users.findUnique({ where: { email } })
+  if (!user) throw new BadRequestError('User does not exist')
   if (user) {
     const passwordToken = crypto.randomBytes(20).toString('hex')
     // send email
@@ -117,13 +118,13 @@ export const forgotPassword = async (req, res) => {
       origin,
     })
 
-    const fiveMinutes = 5 * 60 * 1000
-    const passwordTokenExpirationDate = new Date(Date.now() + fiveMinutes)
+    const tenMinutes = 10 * 60 * 1000
+    const passwordTokenExpirationDate = new Date(Date.now() + tenMinutes)
 
     await prisma.users.update({
       where: { email },
       data: {
-        passwordToken: hashString(passwordToken),
+        passwordToken,
         passwordTokenExpirationDate,
       },
     })
@@ -144,13 +145,14 @@ export const resetPassword = async (req, res) => {
   if (user) {
     const currentDate = new Date()
     if (
-      user.passwordToken === hashPassword(token) &&
+      user.passwordToken === token &&
       user.passwordTokenExpirationDate > currentDate
     ) {
+      const hashedPassword = await hashPassword(password)
       await prisma.users.update({
         where: { email },
         data: {
-          password,
+          password: hashedPassword,
           passwordToken: null,
           passwordTokenExpirationDate: null,
         },
@@ -160,5 +162,3 @@ export const resetPassword = async (req, res) => {
 
   res.send('Password reset successful')
 }
-
-// TODO: nu stiu ce am facut cu resetare parola + forgot
