@@ -27,12 +27,7 @@ router
 router
   .route('/:id')
   .get(getVenue)
-  .patch(
-    validateVenueInput,
-    authenticateUser,
-    authorizePermissions('ADMIN'),
-    updateVenue
-  )
+  .patch(authenticateUser, authorizePermissions('ADMIN'), updateVenue)
   .delete(authenticateUser, authorizePermissions('ADMIN'), deleteVenue)
 
 export default router

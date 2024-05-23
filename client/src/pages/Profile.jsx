@@ -1,13 +1,16 @@
 import React from 'react'
-import { Form, Link, redirect, useLoaderData } from 'react-router-dom'
+import { Form, redirect } from 'react-router-dom'
 import customFetch from '../utils'
 import { toast } from 'react-toastify'
 import { FormInput, Header, Navbar, SubmitBtn } from '../components'
 import { useSelector } from 'react-redux'
+import { useEffect } from 'react'
 
-// nu stiu daca e bine
 export const action = async ({ request }) => {
   const formData = await request.formData()
+  const data = Object.fromEntries(formData)
+  console.log(data)
+
   const file = formData.get('avatar')
   if (file && file.size > 500000) {
     toast.error('Image size too large')
@@ -16,19 +19,25 @@ export const action = async ({ request }) => {
   try {
     await customFetch.patch('/users/update-user', formData)
     toast.success('Profile updated successfully')
+    return redirect('/')
   } catch (error) {
     toast.error(error?.response?.data?.msg)
+    return null
   }
-  return null
 }
 
 const Profile = () => {
   //! f imp
-  console.log(useSelector((store) => console.log(store)))
+  // console.log(useSelector((store) => console.log(store)))
 
-  const { firstName, lastName, email } = useSelector(
+  const { firstName, lastName, email, avatar } = useSelector(
     (store) => store.userState.user
   )
+
+  useEffect(() => {
+    console.log('Profile component re-rendered')
+    console.log('User data from Redux:', { firstName, lastName, email })
+  }, [firstName, lastName, email])
 
   return (
     <>
@@ -36,10 +45,16 @@ const Profile = () => {
       <Navbar />
 
       <section className="h-full grid place-items-center mt-20">
-        <h3 className="text-center text-3xl font-bold">Your Account</h3>
-        <Form method="post" className="form mt-7" encType="multipart/form-data">
-          {/* //TODO  avatar  */}
+        <div className="flex items-center justify-center">
+          <h3 className="text-center text-3xl font-bold">Your Account</h3>
+          <div className="avatar ml-7">
+            <div className="w-20 rounded">
+              <img src={avatar} alt="avatar" />
+            </div>
+          </div>
+        </div>
 
+        <Form method="post" className="form mt-7" encType="multipart/form-data">
           <label className="form-control ">
             <div className="label">
               <span className="label-text capitalize">Select A Photo</span>

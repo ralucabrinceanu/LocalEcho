@@ -33,6 +33,13 @@ export const getAllUsers = async (req, res) => {
   res.status(StatusCodes.OK).json({ users })
 }
 
+export const getUser = async (req, res) => {
+  const { id } = req.params
+  const user = await prisma.users.findUnique({ where: { id } })
+  if (!user) throw new NotFoundError(`No user with id ${id}`)
+  res.status(StatusCodes.OK).json({ user })
+}
+
 export const getCurrentUser = async (req, res) => {
   const user = await prisma.users.findUnique({ where: { id: req.user.userId } })
   const { password, ...userWithoutPassword } = user
@@ -68,6 +75,7 @@ export const getApplicationStats = async (req, res) => {
 }
 
 export const updateUser = async (req, res) => {
+  console.log(req.user)
   // console.log('REQ.FILE ----------------------------> :', req.file)
   const user = await prisma.users.findUnique({ where: { id: req.user.userId } })
   if (!user) throw new NotFoundError(`No user with id ${req.user.userId}`)
@@ -117,13 +125,16 @@ export const updateUserPassword = async (req, res) => {
 }
 
 export const updateUserRole = async (req, res) => {
-  const { userId, role } = req.body
-  // console.log('REQ.BODY', userId)
+  const { id } = req.params
+  const { role } = req.body
+
   const updatedUser = await prisma.users.update({
-    where: { id: userId },
+    where: { id },
     data: { role: [role] },
   })
+
   const { password, ...userWithoutPassword } = updatedUser
+
   res
     .status(StatusCodes.OK)
     .json({ msg: 'User role updated successfully', user: userWithoutPassword })

@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import VenuesList from '../components/VenuesList'
 import customFetch from '../utils'
+import VenuesList from '../components/VenuesList'
+import { HasPermission } from '../components'
 
 export const loader = async ({ request }) => {
   const response = await customFetch.get('/venues')
@@ -11,13 +12,14 @@ export const loader = async ({ request }) => {
 
 const Venues = () => {
   return (
-    <>
-      <Link to={'/add-venue'} className="btn glass mb-7">
-        Add Venues
-      </Link>
-
-      <VenuesList />
-    </>
+    <HasPermission requiredRoles={['ADMIN', 'EVENT_PLANNER']}>
+      <>
+        <Link to={'/add-venue'} className="btn glass mb-7">
+          Add Venues
+        </Link>
+        <VenuesList />
+      </>
+    </HasPermission>
   )
 }
 

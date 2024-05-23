@@ -38,17 +38,15 @@ export const getVenue = async (req, res) => {
 export const updateVenue = async (req, res) => {
   const { id } = req.params
   const { name, address, capacity, city, zipCode } = req.body
-  // if (!name || !address || !capacity || !city) {
-  //   return res
-  //     .status(400)
-  //     .json({ msg: 'Please provide name, address, capacity and city!' })
-  // }
+
   const venue = await prisma.venues.findUnique({ where: { id } })
   if (!venue) throw new NotFoundError(`No venue with id ${id}`)
+
   const updatedVenue = await prisma.venues.update({
     where: { id },
     data: { name, address, capacity, city, zipCode },
   })
+
   res
     .status(StatusCodes.OK)
     .json({ msg: 'Venue modified', venue: updatedVenue })
@@ -64,5 +62,3 @@ export const deleteVenue = async (req, res) => {
     .status(StatusCodes.OK)
     .json({ msg: 'Venue deleted successfully', venue: deletedVenue })
 }
-
-// TODO REACT: venue page + to be visible only for admin and event_planner

@@ -15,6 +15,7 @@ import {
   authorizePermissions,
   authenticateUser,
 } from '../middleware/auth-middleware.js'
+import upload from '../middleware/multer-middleware.js'
 
 router
   .route('/')
@@ -23,6 +24,7 @@ router
     validateEventInput,
     authenticateUser,
     authorizePermissions('ADMIN', 'EVENT_PLANNER'),
+    upload.single('photo'),
     createEvent
   )
 

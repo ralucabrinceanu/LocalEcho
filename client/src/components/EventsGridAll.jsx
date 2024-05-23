@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
 import theatre from '../assets/theatre.jpg'
-import { EventStatus } from '@prisma/client'
+import { EventStatus } from '../../../utils/constants'
 
 const EventsGridAll = () => {
   const { events } = useLoaderData()

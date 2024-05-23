@@ -21,6 +21,8 @@ import {
   EventPlanner,
   ForgotPassword,
   ResetPassword,
+  TestimonialsPage,
+  EditVenue,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -36,6 +38,9 @@ import { loader as usersLoader } from './pages/Users'
 import { loader as venuesLoader } from './pages/Venues'
 import { loader as verifyEmailLoader } from './pages/Verify'
 import { loader as resetPasswordLoader } from './pages/ResetPassword'
+import { loader as adminLoader } from './pages/Admin'
+import { loader as testimonialsLoader } from './pages/Testimonials'
+import { loader as editVenueLoader } from './pages/EditVenue'
 
 // actions
 import { action as registerAction } from './pages/Register'
@@ -49,6 +54,9 @@ import { action as addVenueAction } from './pages/AddVenue'
 import { action as deleteVenueAction } from './pages/DeleteVenue'
 import { action as forgotPasswordAction } from './pages/ForgotPassword'
 import { action as resetPasswordAction } from './pages/ResetPassword'
+import { action as userRoleAction } from './pages/Users'
+import { action as deleteTestimonial } from './pages/DeleteTestimonial'
+import { action as editVenueAction } from './pages/EditVenue'
 
 const router = createBrowserRouter([
   {
@@ -72,6 +80,19 @@ const router = createBrowserRouter([
         path: '/admin',
         element: <Admin />,
         errorElement: <ErrorElement />,
+        loader: adminLoader,
+      },
+      {
+        path: '/testimonials',
+        element: <TestimonialsPage />,
+        errorElement: <ErrorElement />,
+        loader: testimonialsLoader,
+        children: [
+          {
+            path: 'delete-testimonial/:id',
+            action: deleteTestimonial,
+          },
+        ],
       },
       {
         path: '/event-planner',
@@ -88,25 +109,23 @@ const router = createBrowserRouter([
             path: 'delete-event/:id',
             action: deleteEventAction,
           },
-          {
-            path: 'edit-event/:id',
-            element: <EditEvent />,
-            loader: editEventLoader,
-            action: editEventAction,
-          },
         ],
+      },
+      {
+        path: '/edit-event/:id',
+        element: <EditEvent />,
+        loader: editEventLoader,
+        action: editEventAction,
       },
       {
         path: 'users',
         element: <AllUsers />,
         loader: usersLoader,
+        action: userRoleAction,
         children: [
           {
             path: 'delete-user/:id',
             action: deleteUserAction,
-          },
-          {
-            path: 'update-role',
           },
         ],
       },
@@ -143,6 +162,12 @@ const router = createBrowserRouter([
         element: <AddVenue />,
         errorElement: <ErrorElement />,
         action: addVenueAction,
+      },
+      {
+        path: '/edit-venue/:id',
+        element: <EditVenue />,
+        loader: editVenueLoader,
+        action: editVenueAction,
       },
     ],
   },

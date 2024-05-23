@@ -146,7 +146,6 @@ export const validateUpdateUserInput = withValidationErrors([
 ])
 
 export const validateUserRoleInput = withValidationErrors([
-  body('userId').notEmpty().withMessage('userId is required'),
   body('role')
     .notEmpty()
     .withMessage('role is required')

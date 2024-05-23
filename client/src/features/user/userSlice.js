@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify'
+// import Cookies from 'js-cookie'
 
 const themes = {
   cupcake: 'cupcake',
@@ -27,14 +28,17 @@ const userSlice = createSlice({
   reducers: {
     loginUser: (state, action) => {
       console.log(action.payload)
-      const user = { ...action.payload.user, token: action.payload.token }
-      state.user = user
-      // console.log(user)
-      localStorage.setItem('user', JSON.stringify(user))
+      const { user, token } = action.payload
+      const updatedUser = { ...user, token }
+      state.user = updatedUser
+      localStorage.setItem('user', JSON.stringify(updatedUser))
     },
     logoutUser: (state) => {
+      // console.log(JSON.parse(JSON.stringify(state.user)))
+      // console.log(Cookies.get('tokenName'))
       state.user = null
       localStorage.removeItem('user')
+      // Cookies.remove('tokenName')
       toast.success('Logged out successfully')
     },
     toggleTheme: (state) => {

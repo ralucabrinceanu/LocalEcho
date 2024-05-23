@@ -16,6 +16,7 @@ import authRouter from './routes/authRouter.js'
 import eventRouter from './routes/eventRouter.js'
 import reviewRouter from './routes/reviewRouter.js'
 import userRouter from './routes/userRouter.js'
+import testimonialRouter from './routes/testimonialRouter.js'
 
 // public
 import { dirname } from 'path'
@@ -38,7 +39,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
 }
 
-app.use(cors())
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  credentials: true,
+}
+
+app.use(cors(corsOptions))
 app.use(express.static(path.resolve(__dirname, './public')))
 app.use(express.json())
 app.use(cookieParser(process.env.JWT_SECRET))
@@ -55,9 +61,14 @@ app.get('/project/test', (req, res) => {
 // routes
 app.use('/project/venues', venueRouter)
 app.use('/project/auth', authRouter)
-app.use('/project/events', eventRouter) // SCHIMBARE: authenticateUser
-app.use('/project/reviews', authenticateUser, reviewRouter)
-app.use('/project/users', userRouter) //authenticateUser
+app.use('/project/events', eventRouter)
+// app.use('/project/reviews', authenticateUser, reviewRouter)
+app.use('/project/users', userRouter)
+app.use('/project/testimonials', testimonialRouter)
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './public', 'index.html'))
+})
 
 app.use('*', (req, res) => {
   res.status(404).json({ msg: 'not found' })

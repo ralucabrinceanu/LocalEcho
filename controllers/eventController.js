@@ -1,4 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
+import cloudinary from 'cloudinary'
+import { promises as fs } from 'fs'
 import dayjs from 'dayjs'
 import { NotFoundError, UnauthorizedError } from '../errors/customErrors.js'
 import { PrismaClient } from '@prisma/client'
@@ -6,8 +8,7 @@ import { EventStatus, EventCategory } from '@prisma/client'
 const prisma = new PrismaClient()
 
 export const getAllEvents = async (req, res) => {
-  const { search, eventCategory, sort, rightnow, city } = req.query
-  // console.log('sort:', sort)
+  const { search, eventCategory, rightnow, city } = req.query
   const queryObject = {}
 
   if (search) {
@@ -31,22 +32,6 @@ export const getAllEvents = async (req, res) => {
     queryObject.startDate = { lte: currentDate }
     queryObject.endDate = { gte: currentDate }
   }
-
-  // const sortOptions = {
-  //   startDat: 'startDate',
-  //   endDat: 'endDate',
-  //   'a-z': 'eventCategory',
-  //   'z-a': 'eventCategory',
-  // }
-  // const sortDirections = {
-  //   endDat: 'desc',
-  //   'a-z': 'asc',
-  //   'z-a': 'desc',
-  // }
-  // const sortBy = sortOptions[sort] || sortOptions.startDat
-  // console.log('sort by: ', sortBy)
-  // const sortOrder = sortDirections[sort] || 'asc'
-  // console.log('sort order: ', sortOrder)
 
   // get cities
   const cities = await prisma.venues.findMany({
@@ -120,12 +105,23 @@ export const createEvent = async (req, res) => {
     venueId,
     eventStatus,
     eventCategory,
+    // photo,
+    // photoPublicId,
   } = req.body
   req.body.createdById = req.user.userId
 
   const venue = await prisma.venues.findUnique({ where: { id: venueId } })
   if (!venue) throw new NotFoundError(`No venue with id ${venueId}`)
   const venueIdDb = venue.id
+
+  const currentDate = new Date()
+
+  // if (req.file) {
+  //   const response = await cloudinary.v2.uploader.upload(req.file.path)
+  //   await fs.unlink(req.file.path)
+  //   photo = response.secure_url
+  //   photoPublicId = response.public_id
+  // }
 
   const event = await prisma.events.create({
     data: {
@@ -137,8 +133,16 @@ export const createEvent = async (req, res) => {
       eventStatus,
       eventCategory,
       createdById: req.body.createdById,
+      createdAt: currentDate,
+      // photo,
+      // photoPublicId,
     },
   })
+
+  // if (req.file && event.photoPublicId) {
+  //   await cloudinary.v2.uploader.destroy(event.photoPublicId)
+  // }
+
   res.status(StatusCodes.CREATED).json({ event })
 }
 

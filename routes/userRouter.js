@@ -8,6 +8,7 @@ import {
   updateUserPassword,
   updateUserRole,
   deleteUser,
+  getUser,
 } from '../controllers/userController.js'
 import {
   validateUpdateUserInput,
@@ -19,37 +20,37 @@ import {
 } from '../middleware/auth-middleware.js'
 import upload from '../middleware/multer-middleware.js'
 
-router.get(
-  '/all-users',
-  // authenticateUser,
-  // authorizePermissions('ADMIN'),
-  getAllUsers
-)
-router.get('/current-user', authenticateUser, getCurrentUser) // authenticate
-// router.get('/admin/app-stats', authenticateUser, [
-//   authorizePermissions('ADMIN'),
-//   getApplicationStats,
-// ])
+router.get('/all-users', getAllUsers)
 
-router.get('/admin/app-stats', getApplicationStats)
+router.get('/single-user/:id', authorizePermissions('ADMIN'), getUser)
+
+router.get('/current-user', getCurrentUser)
+
+router.get(
+  '/admin/app-stats',
+  authenticateUser,
+  authorizePermissions('ADMIN'),
+  getApplicationStats
+)
 
 router.patch(
   '/update-user',
-  authenticateUser,
   upload.single('avatar'),
+  authenticateUser,
   validateUpdateUserInput,
   updateUser
 )
-router.patch('/updateUserPassword', authenticateUser, updateUserPassword)
+
+router.patch('/updateUserPassword', updateUserPassword)
+
 router.patch(
-  '/update-user-role',
+  '/update-user-role/:id',
   authenticateUser,
   authorizePermissions('ADMIN'),
   validateUserRoleInput,
   updateUserRole
 )
-router.delete('/delete-user/:id', deleteUser) // authenticateUser
+
+router.delete('/delete-user/:id', deleteUser)
 
 export default router
-
-//TODO: verifica rutele !!!

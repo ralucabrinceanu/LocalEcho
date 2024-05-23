@@ -11,6 +11,13 @@ const AdminEventPlanner = () => {
       <Link to={'/venues'} className="btn btn-outline border-t-indigo-500">
         Venues
       </Link>
+
+      <Link
+        to={'/testimonials'}
+        className="btn btn-outline border-t-indigo-500"
+      >
+        Feedback
+      </Link>
     </>
   )
 }

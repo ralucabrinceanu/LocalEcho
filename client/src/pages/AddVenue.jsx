@@ -2,7 +2,7 @@ import React from 'react'
 import { Link, redirect, Form } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import customFetch from '../utils'
-import { FormInput, SubmitBtn } from '../components'
+import { FormInput, HasPermission, SubmitBtn } from '../components'
 
 export const action = async ({ request }) => {
   const formData = await request.formData()
@@ -23,33 +23,33 @@ export const action = async ({ request }) => {
 
 const AddVenue = () => {
   return (
-    <>
-      <Link to={'/venues'} className="btn btn-active btn-ghost mb-7">
-        Back To All Venues
-      </Link>
+    <HasPermission requiredRoles={['ADMIN', 'EVENT_PLANNER']}>
+      <>
+        <Link to={'/venues'} className="btn btn-active btn-ghost mb-7">
+          Back To All Venues
+        </Link>
 
-      <section className="h-full grid place-items-center">
-        <h3 className="text-center text-3xl font-bold">Add Venue</h3>
-        <Form
-          method="post"
-          className="card grid grid-cols-2 gap-10 p-10 bg-base-100 shadow-lg"
-        >
-          <FormInput type="text" name="name" label="name" />
-          <FormInput type="number" name="capacity" label="capacity" />
-          <FormInput type="text" name="address" label="address" />
-          <FormInput type="text" name="city" label="city" />
-          <FormInput type="text" name="zipCode" label="zip code" />
+        <section className="h-full grid place-items-center">
+          <h3 className="text-center text-3xl font-bold">Add Venue</h3>
+          <Form
+            method="post"
+            className="card grid grid-cols-2 gap-10 p-10 bg-base-100 shadow-lg"
+          >
+            <FormInput type="text" name="name" label="name" />
+            <FormInput type="number" name="capacity" label="capacity" />
+            <FormInput type="text" name="address" label="address" />
+            <FormInput type="text" name="city" label="city" />
+            <FormInput type="text" name="zipCode" label="zip code" />
 
-          <div className="col-span-2 text-center">
-            <div className="mt-4">
-              <SubmitBtn text="ADD" />
+            <div className="col-span-2 text-center">
+              <div className="mt-4">
+                <SubmitBtn text="ADD" />
+              </div>
             </div>
-          </div>
-        </Form>
-      </section>
-
-      {/* name, address, capacity, city, zipCode? */}
-    </>
+          </Form>
+        </section>
+      </>
+    </HasPermission>
   )
 }
 

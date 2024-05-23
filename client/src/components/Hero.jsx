@@ -9,15 +9,15 @@ const carouselImages = [hero1, hero2, hero3, hero4]
 
 const Hero = () => {
   return (
-    <div className="grid lg:grid-cols2 gap-24 items-center">
+    <div className="grid lg:grid-cols-2 gap-24 items-center">
       <div>
         <h1 className="max-w-2xl text-4xl font-bold tracking-tight sm:text-6xl">
-          Where Local Vibrations Find Their Echo
+          Where Local Vibrations Find Their Echo{' '}
         </h1>
         <p className="mt-8 max-w-xl text-lg leading-8">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex commodi
-          reprehenderit iusto atque aperiam libero recusandae, error architecto
-          rerum dolorum.
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore
+          repellat explicabo enim soluta temporibus asperiores aut obcaecati
+          perferendis porro nobis.
         </p>
         <div className="mt-10">
           <Link to="/events" className="btn btn-primary">
@@ -25,8 +25,7 @@ const Hero = () => {
           </Link>
         </div>
       </div>
-
-      <div className="hidden h-[28rem] lg:carousel carousel-center p-4 space-x-4 bg-neutral rounded-box">
+      <div className="hidden h-[28rem] lg:carousel carousel-center p-4 space-x-4 bg-neutral rounded-box ">
         {carouselImages.map((image) => {
           return (
             <div key={image} className="carousel-item">

@@ -11,10 +11,11 @@ export const action =
     // console.log(store)
     const formData = await request.formData()
     const data = Object.fromEntries(formData)
+    console.log(data)
 
     try {
       const response = await customFetch.post('/auth/login', data)
-      // console.log(response)
+      console.log(response.data)
       store.dispatch(loginUser(response.data))
       toast.success('Logged in successfully')
       return redirect('/')
@@ -35,18 +36,8 @@ const Login = () => {
         className="card w-96 p-8 bg-base-100 shadow-lg flex flex-col gap-y-4"
       >
         <h4 className="text-center text-3xl font-bold">Login</h4>
-        <FormInput
-          type="email"
-          label="Email"
-          name="email"
-          defaultValue="ralu@gmail.com"
-        />
-        <FormInput
-          type="password"
-          label="Password"
-          name="password"
-          defaultValue="secret"
-        />
+        <FormInput type="email" label="Email" name="email" />
+        <FormInput type="password" label="Password" name="password" />
 
         <div className="mt-4">
           <SubmitBtn text="LOGIN" />
