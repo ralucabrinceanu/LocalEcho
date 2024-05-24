@@ -132,17 +132,17 @@ export const validateReviewUpdateInput = withValidationErrors([
 export const validateUpdateUserInput = withValidationErrors([
   body('firstName').notEmpty().withMessage('firstName is required'),
   body('lastName').notEmpty().withMessage('lastName is required'),
-  body('email')
-    .notEmpty()
-    .withMessage('email is required')
-    .isEmail()
-    .withMessage('invalid email format')
-    .custom(async (email, { req }) => {
-      // console.log(req.user)
-      const user = await prisma.users.findUnique({ where: { email } })
-      if (user && user.id !== req.user.userId)
-        throw new BadRequestError('email already exists')
-    }),
+  // body('email')
+  //   .notEmpty()
+  //   .withMessage('email is required')
+  //   .isEmail()
+  //   .withMessage('invalid email format')
+  //   .custom(async (email, { req }) => {
+  //     // console.log(req.user)
+  //     const user = await prisma.users.findUnique({ where: { email } })
+  //     if (user && user.id !== req.user.userId)
+  //       throw new BadRequestError('email already exists')
+  //   }),
 ])
 
 export const validateUserRoleInput = withValidationErrors([

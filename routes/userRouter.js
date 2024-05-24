@@ -24,7 +24,7 @@ router.get('/all-users', getAllUsers)
 
 router.get('/single-user/:id', authorizePermissions('ADMIN'), getUser)
 
-router.get('/current-user', getCurrentUser)
+router.get('/current-user', authenticateUser, getCurrentUser)
 
 router.get(
   '/admin/app-stats',

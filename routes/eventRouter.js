@@ -28,7 +28,7 @@ router
     createEvent
   )
 
-router.route('/stats').get(showStats)
+// router.route('/stats').get(showStats)
 
 router
   .route('/:id')

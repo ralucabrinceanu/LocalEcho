@@ -69,7 +69,7 @@ export const getAllEvents = async (req, res) => {
 
   // setup pagination
   const page = Number(req.query.page) || 1
-  const limit = Number(req.query.limit) || 9
+  const limit = Number(req.query.limit) || 3 //! schimba
   const skip = (page - 1) * limit
 
   const events = await prisma.events.findMany({
@@ -105,8 +105,6 @@ export const createEvent = async (req, res) => {
     venueId,
     eventStatus,
     eventCategory,
-    // photo,
-    // photoPublicId,
   } = req.body
   req.body.createdById = req.user.userId
 
@@ -115,13 +113,6 @@ export const createEvent = async (req, res) => {
   const venueIdDb = venue.id
 
   const currentDate = new Date()
-
-  // if (req.file) {
-  //   const response = await cloudinary.v2.uploader.upload(req.file.path)
-  //   await fs.unlink(req.file.path)
-  //   photo = response.secure_url
-  //   photoPublicId = response.public_id
-  // }
 
   const event = await prisma.events.create({
     data: {
@@ -134,14 +125,8 @@ export const createEvent = async (req, res) => {
       eventCategory,
       createdById: req.body.createdById,
       createdAt: currentDate,
-      // photo,
-      // photoPublicId,
     },
   })
-
-  // if (req.file && event.photoPublicId) {
-  //   await cloudinary.v2.uploader.destroy(event.photoPublicId)
-  // }
 
   res.status(StatusCodes.CREATED).json({ event })
 }
