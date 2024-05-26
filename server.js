@@ -17,6 +17,7 @@ import eventRouter from './routes/eventRouter.js'
 import reviewRouter from './routes/reviewRouter.js'
 import userRouter from './routes/userRouter.js'
 import testimonialRouter from './routes/testimonialRouter.js'
+import ticketRouter from './routes/ticketRouter.js'
 
 // public
 import { dirname } from 'path'
@@ -65,6 +66,7 @@ app.use('/project/events', eventRouter)
 // app.use('/project/reviews', authenticateUser, reviewRouter)
 app.use('/project/users', userRouter)
 app.use('/project/testimonials', testimonialRouter)
+app.use('/project/tickets', ticketRouter)
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, './public', 'index.html'))

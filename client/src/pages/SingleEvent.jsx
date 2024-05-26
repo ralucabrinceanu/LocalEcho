@@ -4,24 +4,65 @@ import { useLoaderData, Link } from 'react-router-dom'
 import customFetch from '../utils'
 import theatre from '../assets/theatre.jpg'
 
-const formatDate = (dateString) => {
-  const options = {
+// const formatDate = (dateString) => {
+//   const options = {
+//     year: 'numeric',
+//     month: 'short',
+//     day: 'numeric',
+//     hour: 'numeric',
+//     minute: 'numeric',
+//   }
+//   return new Date(dateString).toLocaleString('en-US', options)
+// }
+
+const formatDate = (dateString, options = {}) => {
+  const defaultOptions = {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
   }
-  return new Date(dateString).toLocaleString('en-US', options)
+  const formatOptions = { ...defaultOptions, ...options }
+  return new Date(dateString).toLocaleString('en-US', formatOptions)
+}
+
+const isSameDay = (start, end) => {
+  const startDate = new Date(start)
+  const endDate = new Date(end)
+  return (
+    startDate.getFullYear() === endDate.getFullYear() &&
+    startDate.getMonth() === endDate.getMonth() &&
+    startDate.getDate() === endDate.getDate()
+  )
+}
+
+const formatEventDate = (startDate, endDate) => {
+  if (isSameDay(startDate, endDate)) {
+    const startTime = formatDate(startDate, {
+      year: undefined,
+      month: undefined,
+      day: undefined,
+    })
+    const endTime = formatDate(endDate, {
+      year: undefined,
+      month: undefined,
+      day: undefined,
+    })
+    return `${formatDate(startDate, {
+      hour: undefined,
+      minute: undefined,
+    })}, ${startTime} - ${endTime}`
+  } else {
+    return `${formatDate(startDate)} - ${formatDate(endDate)}`
+  }
 }
 
 export const loader = async ({ params }) => {
   const response = await customFetch(`/events/${params.id}`)
-  // console.log(response.data.event)
   const event = response.data.event
 
   const venueResponse = await customFetch(`/venues/${event.venueId}`)
-  // console.log(venueResponse.data.venue)
   const venue = venueResponse.data.venue
 
   return { event, venue }
@@ -29,7 +70,6 @@ export const loader = async ({ params }) => {
 
 const SingleEvent = () => {
   const { event, venue } = useLoaderData()
-  // console.log(event)
   const {
     title,
     description,
@@ -68,10 +108,13 @@ const SingleEvent = () => {
           <h4 className="text-xl text-neutral-content font-bold mt-2">
             {venue.address}, {venue.name}
           </h4>
-          <p className="mt-3 text-xl">
+          {/* <p className="mt-3 text-xl">
             {formatDate(startDate)} - {formatDate(endDate)}
-          </p>
+          </p> */}
+          <p className="mt-3 text-xl">{formatEventDate(startDate, endDate)}</p>
           <p className="mt-6 leading-8">{description}</p>
+
+          <button className="btn btn-info mt-5">Buy Tickets</button>
         </div>
         {/* //TODO btn to tickets */}
       </div>

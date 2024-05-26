@@ -23,6 +23,8 @@ import {
   ResetPassword,
   TestimonialsPage,
   EditVenue,
+  Tickets,
+  AddTicket,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -57,6 +59,7 @@ import { action as resetPasswordAction } from './pages/ResetPassword'
 import { action as userRoleAction } from './pages/Users'
 import { action as deleteTestimonial } from './pages/DeleteTestimonial'
 import { action as editVenueAction } from './pages/EditVenue'
+import { action as createTicketAction } from './pages/AddTicket'
 
 const router = createBrowserRouter([
   {
@@ -170,6 +173,12 @@ const router = createBrowserRouter([
         action: editVenueAction,
       },
     ],
+  },
+  {
+    path: '/add-ticket/:id',
+    element: <AddTicket />,
+    errorElement: <ErrorElement />,
+    action: createTicketAction,
   },
   {
     path: '/login',

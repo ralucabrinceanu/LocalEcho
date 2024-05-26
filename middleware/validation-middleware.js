@@ -81,7 +81,7 @@ export const validateEventInput = withValidationErrors([
     .withMessage('Start date must be before end date'),
   body('eventStatus')
     .optional()
-    .isIn(['SCHEDULED', 'RIGHT_NOW', 'COMPLETED', 'CANCELLED', 'ON_HOLD'])
+    .isIn(['SCHEDULED', 'RIGHT_NOW', 'COMPLETED', 'CANCELLED'])
     .withMessage('Invalid event status '),
   body('eventCategory')
     .optional()
@@ -151,4 +151,38 @@ export const validateUserRoleInput = withValidationErrors([
     .withMessage('role is required')
     .isIn(['USER', 'ADMIN', 'EVENT_PLANNER'])
     .withMessage('Invalid role'),
+])
+
+export const validateTicketInput = withValidationErrors([
+  // body('eventId')
+  //   .notEmpty()
+  //   .withMessage('event_id is required')
+  //   .isUUID()
+  //   .withMessage('invalid event_id format'),
+  body('ticketType')
+    .notEmpty()
+    .withMessage('Ticket type is required')
+    .isIn(['NO_TICKET', 'GENERAL', 'STUDENT', 'SENIOR'])
+    .withMessage('Invalid ticket type'),
+  body('ticketsAvailable')
+    .isInt({ min: 0 })
+    .withMessage('Tickets available must be a non-negative integer'),
+  body('price')
+    .isInt({ min: 0 })
+    .withMessage('Price must be a non-negative integer'),
+])
+
+export const validateUpdateTicketInput = withValidationErrors([
+  body('ticketType')
+    .optional()
+    .isIn(['NO_TICKET', 'GENERAL', 'STUDENT', 'SENIOR'])
+    .withMessage('Invalid ticket type'),
+  body('ticketsAvailable')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Tickets available must be a non-negative integer'),
+  body('price')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('Price must be a non-negative integer'),
 ])

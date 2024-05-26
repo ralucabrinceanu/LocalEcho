@@ -249,7 +249,6 @@ export const showStats = async (req, res) => {
     RIGHT_NOW: formattedStats.RIGHT_NOW || 0,
     SCHEDULED: formattedStats.SCHEDULED || 0,
     COMPLETED: formattedStats.COMPLETED || 0,
-    ON_HOLD: formattedStats.ON_HOLD || 0,
   }
 
   const monthlyEvents = await prisma.$queryRaw`

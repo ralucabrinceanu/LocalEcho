@@ -42,8 +42,11 @@ const EventsCrud = () => {
         <Link to={'/add-venue'} className="btn glass mt-4 mr-4">
           Add Venue
         </Link>
-        <Link to={'/add-event'} className="btn glass mt-4">
+        <Link to={'/add-event'} className="btn glass mt-4 mr-4">
           Add Event
+        </Link>
+        <Link to={'/add-ticket'} className="btn glass mt-4 ">
+          Add Tickets
         </Link>
 
         <div>
@@ -88,10 +91,19 @@ const EventsCrud = () => {
                           method="post"
                           action={`/events-crud/delete-event/${id}`}
                         >
-                          <button type="submit" className="btn btn-secondary">
+                          <button
+                            type="submit"
+                            className="btn btn-secondary mr-2"
+                          >
                             Delete
                           </button>
                         </Form>
+                        <Link
+                          to={`/add-ticket/${id}`}
+                          className="btn btn-accent"
+                        >
+                          Tickets
+                        </Link>
                       </div>
                     </div>
                   )

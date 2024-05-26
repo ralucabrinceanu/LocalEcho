@@ -8,6 +8,7 @@ const FormSelect = ({ label, name, list, defaultValue, size }) => {
       </label>
       <select
         name={name}
+        id={name}
         className={`select select-bordered ${size}`}
         defaultValue={defaultValue}
       >

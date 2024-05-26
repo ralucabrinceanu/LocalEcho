@@ -10,7 +10,6 @@ export const EventStatus = {
   RIGHT_NOW: 'RIGHT_NOW',
   COMPLETED: 'COMPLETED',
   CANCELLED: 'CANCELLED',
-  ON_HOLD: 'ON_HOLD',
 }
 
 export const EventCategory = {
@@ -20,4 +19,11 @@ export const EventCategory = {
   FAMILY_AND_KIDS: 'FAMILY_AND_KIDS',
   CHARITY: 'CHARITY',
   HEALTH_AND_WELLNESS: 'HEALTH_AND_WELLNESS',
+}
+
+export const TicketType = {
+  NO_TICKET: 'NO_TICKET',
+  GENERAL: 'GENERAL',
+  STUDENT: 'STUDENT',
+  SENIOR: 'SENIOR',
 }
