@@ -18,6 +18,7 @@ import reviewRouter from './routes/reviewRouter.js'
 import userRouter from './routes/userRouter.js'
 import testimonialRouter from './routes/testimonialRouter.js'
 import ticketRouter from './routes/ticketRouter.js'
+import orderRouter from './routes/orderRouter.js'
 
 // public
 import { dirname } from 'path'
@@ -26,7 +27,6 @@ import path from 'path'
 
 // middleware
 import errorHandlerMiddleware from './middleware/error-handler.js'
-import { authenticateUser } from './middleware/auth-middleware.js'
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -67,6 +67,7 @@ app.use('/project/events', eventRouter)
 app.use('/project/users', userRouter)
 app.use('/project/testimonials', testimonialRouter)
 app.use('/project/tickets', ticketRouter)
+app.use('/project/orders', orderRouter)
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, './public', 'index.html'))

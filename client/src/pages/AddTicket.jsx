@@ -21,7 +21,7 @@ export const action = async ({ request, params }) => {
 
   try {
     await customFetch.post(`/tickets/${params.id}`, data)
-    toast.success('Venue updated successfully')
+    toast.success('Tickets added successfully')
     return redirect('/events')
   } catch (error) {
     console.log(error)
@@ -71,5 +71,3 @@ const AddTicket = () => {
 }
 
 export default AddTicket
-
-// TODO buy tickets

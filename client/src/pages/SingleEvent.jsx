@@ -4,17 +4,6 @@ import { useLoaderData, Link } from 'react-router-dom'
 import customFetch from '../utils'
 import theatre from '../assets/theatre.jpg'
 
-// const formatDate = (dateString) => {
-//   const options = {
-//     year: 'numeric',
-//     month: 'short',
-//     day: 'numeric',
-//     hour: 'numeric',
-//     minute: 'numeric',
-//   }
-//   return new Date(dateString).toLocaleString('en-US', options)
-// }
-
 const formatDate = (dateString, options = {}) => {
   const defaultOptions = {
     year: 'numeric',
@@ -59,10 +48,10 @@ const formatEventDate = (startDate, endDate) => {
 }
 
 export const loader = async ({ params }) => {
-  const response = await customFetch(`/events/${params.id}`)
+  const response = await customFetch.get(`/events/${params.id}`)
   const event = response.data.event
 
-  const venueResponse = await customFetch(`/venues/${event.venueId}`)
+  const venueResponse = await customFetch.get(`/venues/${event.venueId}`)
   const venue = venueResponse.data.venue
 
   return { event, venue }
@@ -71,6 +60,7 @@ export const loader = async ({ params }) => {
 const SingleEvent = () => {
   const { event, venue } = useLoaderData()
   const {
+    id,
     title,
     description,
     startDate,
@@ -108,15 +98,13 @@ const SingleEvent = () => {
           <h4 className="text-xl text-neutral-content font-bold mt-2">
             {venue.address}, {venue.name}
           </h4>
-          {/* <p className="mt-3 text-xl">
-            {formatDate(startDate)} - {formatDate(endDate)}
-          </p> */}
           <p className="mt-3 text-xl">{formatEventDate(startDate, endDate)}</p>
           <p className="mt-6 leading-8">{description}</p>
 
-          <button className="btn btn-info mt-5">Buy Tickets</button>
+          <Link to={`/events/${id}/tickets`} className="btn btn-info mt-5">
+            Buy Tickets
+          </Link>
         </div>
-        {/* //TODO btn to tickets */}
       </div>
     </section>
   )

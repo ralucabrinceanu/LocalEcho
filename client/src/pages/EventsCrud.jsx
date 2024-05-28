@@ -45,9 +45,6 @@ const EventsCrud = () => {
         <Link to={'/add-event'} className="btn glass mt-4 mr-4">
           Add Event
         </Link>
-        <Link to={'/add-ticket'} className="btn glass mt-4 ">
-          Add Tickets
-        </Link>
 
         <div>
           {totalEvents === 0 ? (

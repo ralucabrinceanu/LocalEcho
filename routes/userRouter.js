@@ -22,7 +22,12 @@ import upload from '../middleware/multer-middleware.js'
 
 router.get('/all-users', getAllUsers)
 
-router.get('/single-user/:id', authorizePermissions('ADMIN'), getUser)
+router.get(
+  '/single-user/:id',
+  authenticateUser,
+  authorizePermissions('ADMIN'),
+  getUser
+)
 
 router.get('/current-user', authenticateUser, getCurrentUser)
 

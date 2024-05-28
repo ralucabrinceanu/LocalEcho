@@ -39,6 +39,7 @@ model Users {
   passwordTokenExpirationDate DateTime? @map("psd_token_exp")
   Venues                      Venues[]
   Tickets                     Tickets[]
+  Orders                      Orders[]
 
   @@map("users")
 }
@@ -86,14 +87,15 @@ enum EventCategory {
 }
 
 model Tickets {
-  id               String     @id @default(uuid())
-  event            Events?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  eventId          String?    @map("event_id")
-  ticketType       TicketType @map("ticket_type")
-  ticketsAvailable Int        @map("tickets_available")
-  price            Int        @default(0)
-  createdBy        Users?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  createdById      String?    @map("created_by")
+  id               String            @id @default(uuid())
+  event            Events?           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  eventId          String?           @map("event_id")
+  ticketType       TicketType        @map("ticket_type")
+  ticketsAvailable Int               @map("tickets_available")
+  price            Int               @default(0)
+  createdBy        Users?            @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdById      String?           @map("created_by")
+  SingleOrderItem  SingleOrderItem[]
 
   @@map("tickets")
 }
@@ -114,4 +116,36 @@ model Reviews {
   createdById String    @map("created_by")
 
   @@map("reviews")
+}
+
+model SingleOrderItem {
+  id       String  @id @default(uuid())
+  price    Int
+  amount   Int
+  ticket   Tickets @relation(fields: [ticketId], references: [id])
+  ticketId String  @map("ticket_id")
+  order    Orders  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId  String  @map("order_id")
+}
+
+model Orders {
+  id              String            @id @default(uuid())
+  total           Int
+  clientSecret    String            @map("client_secret")
+  paymentIntentId String?
+  orderItems      SingleOrderItem[]
+  createdAt       DateTime          @default(now())
+  status          OrderStatus       @default(PENDING) @map("order_status")
+  orderedBy       Users?            @relation(fields: [orderedById], references: [id], onDelete: SetNull)
+  orderedById     String?           @map("created_by")
+
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  FAILED
+  PAID
+  DELIVERED
+  CANCEL
 }

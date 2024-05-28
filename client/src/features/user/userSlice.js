@@ -34,11 +34,8 @@ const userSlice = createSlice({
       localStorage.setItem('user', JSON.stringify(updatedUser))
     },
     logoutUser: (state) => {
-      // console.log(JSON.parse(JSON.stringify(state.user)))
-      // console.log(Cookies.get('tokenName'))
       state.user = null
       localStorage.removeItem('user')
-      // Cookies.remove('tokenName')
       toast.success('Logged out successfully')
     },
     toggleTheme: (state) => {

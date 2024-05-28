@@ -8,9 +8,9 @@ const links = [
   { id: 3, url: 'events', text: 'events' },
   { id: 4, url: 'admin', text: 'admin' },
   { id: 5, url: 'event-planner', text: 'event planner' },
-  //   { id: 4, url: 'cart', text: 'cart' },
-  //   { id: 5, url: 'checkout', text: 'checkout' },
-  //   { id: 6, url: 'orders', text: 'orders' },
+  { id: 6, url: 'cart', text: 'cart' },
+  { id: 7, url: 'checkout', text: 'checkout' },
+  { id: 8, url: 'orders', text: 'orders' },
 ]
 
 const NavLinks = () => {
@@ -30,6 +30,8 @@ const NavLinks = () => {
         if (url === 'admin' && (!user || !user.role.includes('ADMIN')))
           //! restrictionare pagini
           return null
+
+        if ((url === 'checkout' || url === 'orders') && !user) return null
 
         return (
           <li key={id}>

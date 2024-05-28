@@ -15,7 +15,7 @@ const Venues = () => {
     <HasPermission requiredRoles={['ADMIN', 'EVENT_PLANNER']}>
       <>
         <Link to={'/add-venue'} className="btn glass mb-7">
-          Add Venues
+          Add Venue
         </Link>
         <VenuesList />
       </>

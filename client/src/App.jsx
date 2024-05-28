@@ -25,6 +25,10 @@ import {
   EditVenue,
   Tickets,
   AddTicket,
+  EventTickets,
+  Cart,
+  Checkout,
+  Orders,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -43,6 +47,9 @@ import { loader as resetPasswordLoader } from './pages/ResetPassword'
 import { loader as adminLoader } from './pages/Admin'
 import { loader as testimonialsLoader } from './pages/Testimonials'
 import { loader as editVenueLoader } from './pages/EditVenue'
+import { loader as eventTicketLoader } from './pages/EventTickets'
+import { loader as cartLoader } from './pages/Cart'
+import { loader as checkoutLoader } from './pages/Checkout'
 
 // actions
 import { action as registerAction } from './pages/Register'
@@ -78,6 +85,26 @@ const router = createBrowserRouter([
         element: <Events />,
         errorElement: <ErrorElement />,
         loader: eventsLoader,
+      },
+      {
+        path: '/about',
+        element: <About />,
+      },
+      {
+        path: 'cart',
+        element: <Cart />,
+        loader: cartLoader,
+      },
+      {
+        path: 'checkout',
+        element: <Checkout />,
+        errorElement: <ErrorElement />,
+        loader: checkoutLoader(store),
+      },
+      {
+        path: 'orders',
+        element: <Orders />,
+        errorElement: <ErrorElement />,
       },
       {
         path: '/admin',
@@ -139,10 +166,6 @@ const router = createBrowserRouter([
         loader: singleEventLoader,
       },
       {
-        path: '/about',
-        element: <About />,
-      },
-      {
         path: '/add-event',
         element: <AddEvents />,
         errorElement: <ErrorElement />,
@@ -172,14 +195,21 @@ const router = createBrowserRouter([
         loader: editVenueLoader,
         action: editVenueAction,
       },
+      {
+        path: '/add-ticket/:id',
+        element: <AddTicket />,
+        errorElement: <ErrorElement />,
+        action: createTicketAction,
+      },
+      {
+        path: '/events/:id/tickets',
+        element: <EventTickets />,
+        errorElement: <ErrorElement />,
+        loader: eventTicketLoader,
+      },
     ],
   },
-  {
-    path: '/add-ticket/:id',
-    element: <AddTicket />,
-    errorElement: <ErrorElement />,
-    action: createTicketAction,
-  },
+
   {
     path: '/login',
     element: <Login />,
