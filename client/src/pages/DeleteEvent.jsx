@@ -7,7 +7,7 @@ export const action = async ({ params }) => {
   try {
     await customFetch.delete(`events/${params.id}`)
     toast.success('Event deleted successfully')
-    return redirect('/events-crud')
+    return redirect('/events')
   } catch (error) {
     toast.error(error?.response?.data?.msg)
     return redirect('/')

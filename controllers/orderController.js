@@ -18,10 +18,30 @@ export const getSingleOrder = async (req, res) => {
 }
 
 export const getCurrentUserOrders = async (req, res) => {
+  const { search } = req.query
+  const queryObject = {}
+  // PAGINATION
+  const page = Number(req.query.page) || 1
+  const limit = Number(req.query.limit) || 2
+  const skip = (page - 1) * limit
+
   const orders = await prisma.orders.findMany({
     where: { orderedById: req.user.userId },
+    take: limit,
+    skip: skip,
   })
-  res.status(StatusCodes.OK).json({ orders, count: orders.length })
+
+  const totalOrders = await prisma.orders.count({
+    where: { AND: [{ orderedById: req.user.userId }, queryObject] },
+  })
+  const numOfPages = Math.ceil(totalOrders / limit)
+
+  res.status(StatusCodes.OK).json({
+    meta: {
+      pagination: { totalOrders, numOfPages, currentPage: page },
+    },
+    orders,
+  })
 }
 
 const fakeStripeAPI = async ({ amount, currency }) => {
@@ -88,9 +108,10 @@ export const createOrder = async (req, res) => {
     ...order,
     orderItems: orderItems,
   }
-  res
-    .status(StatusCodes.CREATED)
-    .json({ order: orderWithItems, clientSecret: order.clientSecret })
+  res.status(StatusCodes.CREATED).json({
+    order: orderWithItems,
+    clientSecret: order.clientSecret,
+  })
 }
 
 export const updateOrder = async (req, res) => {

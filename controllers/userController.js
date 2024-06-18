@@ -47,6 +47,7 @@ export const getCurrentUser = async (req, res) => {
 }
 
 export const getApplicationStats = async (req, res) => {
+  const orders = await prisma.orders.count()
   const users = await prisma.users.count()
   // const events = await prisma.events.count()
   const completedEvents = await prisma.events.count({
@@ -68,6 +69,7 @@ export const getApplicationStats = async (req, res) => {
   res.status(StatusCodes.OK).json({
     msg: 'application stats',
     users,
+    orders,
     completedEvents,
     scheduledEvents,
     liveEvents,

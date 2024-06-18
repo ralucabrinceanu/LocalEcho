@@ -9,7 +9,6 @@ export const loader = async ({ request }) => {
     ...new URL(request.url).searchParams.entries(),
   ])
   const response = await customFetch.get('/users/all-users', { params })
-  //   console.log(response.data.users)
   const users = response.data.users
 
   return { users, params }
@@ -77,7 +76,6 @@ const AllUsers = () => {
                     <button
                       className="btn btn-outline btn-accent"
                       onClick={() => {
-                        console.log(user)
                         document
                           .getElementById(`my_modal_${user.id}`)
                           .showModal()
@@ -86,13 +84,10 @@ const AllUsers = () => {
                       Change
                     </button>
 
-                    <dialog
-                      id={`my_modal_${user.id}`}
-                      className="modal modal-bottom sm:modal-middle"
-                    >
+                    <dialog id={`my_modal_${user.id}`} className="modal">
                       <Form
                         method="post"
-                        action={`/users/change-role/${user.id}`}
+                        action={`/users/update-user-role/${user.id}`}
                       >
                         <div className="modal-box">
                           <h3 className="font-bold text-lg">
@@ -102,7 +97,7 @@ const AllUsers = () => {
 
                           <label className="form-control w-full max-w-xs">
                             <select
-                              name="newRole"
+                              name="role"
                               className="select select-accent"
                             >
                               {Object.values(Role).map((role, index) => (
@@ -121,9 +116,9 @@ const AllUsers = () => {
                                   .getElementById(`my_modal_${user.id}`)
                                   .close()
                               }
-                              className="btn"
+                              className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                             >
-                              Close
+                              ✕
                             </button>
                           </div>
                           <SubmitBtn text="Change" />

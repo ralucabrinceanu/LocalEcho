@@ -1,8 +1,7 @@
 import React from 'react'
-import { useState } from 'react'
 import { useLoaderData, Link } from 'react-router-dom'
 import customFetch from '../utils'
-import theatre from '../assets/theatre.jpg'
+import defaultEventImage from '../assets/no-event-photo.png'
 
 const formatDate = (dateString, options = {}) => {
   const defaultOptions = {
@@ -69,9 +68,13 @@ const SingleEvent = () => {
     eventStatus,
     venueId,
     createdById,
+    image,
+    imagePublicId,
   } = event
 
   const { name, address } = venue
+
+  const eventImage = image || defaultEventImage
 
   return (
     <section>
@@ -87,9 +90,8 @@ const SingleEvent = () => {
       </div>
       {/* EVENT */}
       <div className="mt-6 grid gap-y-8 lg:grid-cols-2 lg:gap-x-16">
-        {/* //TODO image */}
         <img
-          src={theatre}
+          src={eventImage}
           alt={title}
           className="w-96 h-96 object-cover rounded-lg lg:w-full"
         />

@@ -29,6 +29,9 @@ import {
   Cart,
   Checkout,
   Orders,
+  OrdersAdmin,
+  ChangeRole,
+  EventsCrudAdmin,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -39,6 +42,7 @@ import { loader as landingLoader } from './pages/Landing'
 import { loader as singleEventLoader } from './pages/SingleEvent'
 import { loader as eventsLoader } from './pages/Events'
 import { loader as eventsCrudLoader } from './pages/EventsCrud'
+import { loader as eventsCrudAdminLoader } from './pages/EventsCrudAdmin'
 import { loader as editEventLoader } from './pages/EditEvent'
 import { loader as usersLoader } from './pages/Users'
 import { loader as venuesLoader } from './pages/Venues'
@@ -50,6 +54,8 @@ import { loader as editVenueLoader } from './pages/EditVenue'
 import { loader as eventTicketLoader } from './pages/EventTickets'
 import { loader as cartLoader } from './pages/Cart'
 import { loader as checkoutLoader } from './pages/Checkout'
+import { loader as ordersLoader } from './pages/Orders'
+import { loader as ordersAdminLoader } from './pages/OrdersAdmin'
 
 // actions
 import { action as registerAction } from './pages/Register'
@@ -67,6 +73,7 @@ import { action as userRoleAction } from './pages/Users'
 import { action as deleteTestimonial } from './pages/DeleteTestimonial'
 import { action as editVenueAction } from './pages/EditVenue'
 import { action as createTicketAction } from './pages/AddTicket'
+import { action as changeRoleAction } from './pages/ChangeRole'
 
 const router = createBrowserRouter([
   {
@@ -102,9 +109,16 @@ const router = createBrowserRouter([
         loader: checkoutLoader(store),
       },
       {
-        path: 'orders',
+        path: 'orders/showAllMyOrders',
         element: <Orders />,
         errorElement: <ErrorElement />,
+        loader: ordersLoader(store),
+      },
+      {
+        path: 'orders/allOrders',
+        element: <OrdersAdmin />,
+        errorElement: <ErrorElement />,
+        loader: ordersAdminLoader,
       },
       {
         path: '/admin',
@@ -142,6 +156,18 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: '/events-crud-admin',
+        element: <EventsCrudAdmin />,
+        errorElement: <ErrorElement />,
+        loader: eventsCrudAdminLoader,
+        children: [
+          {
+            path: 'delete-event/:id',
+            action: deleteEventAction,
+          },
+        ],
+      },
+      {
         path: '/edit-event/:id',
         element: <EditEvent />,
         loader: editEventLoader,
@@ -156,6 +182,10 @@ const router = createBrowserRouter([
           {
             path: 'delete-user/:id',
             action: deleteUserAction,
+          },
+          {
+            path: 'update-user-role/:id',
+            action: changeRoleAction,
           },
         ],
       },
@@ -207,6 +237,12 @@ const router = createBrowserRouter([
         errorElement: <ErrorElement />,
         loader: eventTicketLoader,
       },
+      {
+        path: '/update-profile',
+        element: <Profile />,
+        errorElement: <Error />,
+        action: profileAction,
+      },
     ],
   },
 
@@ -221,12 +257,6 @@ const router = createBrowserRouter([
     element: <Register />,
     errorElement: <Error />,
     action: registerAction,
-  },
-  {
-    path: '/update-profile',
-    element: <Profile />,
-    errorElement: <Error />,
-    action: profileAction,
   },
   {
     path: '/user/verify-email',

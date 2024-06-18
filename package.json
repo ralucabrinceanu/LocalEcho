@@ -37,7 +37,8 @@
     "nanoid": "^4.0.2",
     "nodemailer": "^6.7.0",
     "nodemon": "^2.0.22",
-    "react-cookie": "^7.1.4"
+    "react-cookie": "^7.1.4",
+    "stripe": "^15.8.0"
   },
   "devDependencies": {
     "prisma": "^5.13.0"

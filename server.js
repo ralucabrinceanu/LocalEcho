@@ -14,7 +14,6 @@ import cloudinary from 'cloudinary'
 import venueRouter from './routes/venueRouter.js'
 import authRouter from './routes/authRouter.js'
 import eventRouter from './routes/eventRouter.js'
-import reviewRouter from './routes/reviewRouter.js'
 import userRouter from './routes/userRouter.js'
 import testimonialRouter from './routes/testimonialRouter.js'
 import ticketRouter from './routes/ticketRouter.js'
@@ -24,6 +23,9 @@ import orderRouter from './routes/orderRouter.js'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import path from 'path'
+
+// controller
+import { stripeController } from './controllers/stripeController.js'
 
 // middleware
 import errorHandlerMiddleware from './middleware/error-handler.js'
@@ -54,16 +56,13 @@ app.get('/', (req, res) => {
   res.send('hello world')
 })
 
-// frontend
-app.get('/project/test', (req, res) => {
-  res.json({ msg: 'test route' })
-})
+// stripe
+app.post('/project/stripe', stripeController)
 
 // routes
 app.use('/project/venues', venueRouter)
 app.use('/project/auth', authRouter)
 app.use('/project/events', eventRouter)
-// app.use('/project/reviews', authenticateUser, reviewRouter)
 app.use('/project/users', userRouter)
 app.use('/project/testimonials', testimonialRouter)
 app.use('/project/tickets', ticketRouter)

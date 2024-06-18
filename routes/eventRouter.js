@@ -7,7 +7,7 @@ import {
   getEvent,
   updateEvent,
   deleteEvent,
-  showStats,
+  getUserEvents,
 } from '../controllers/eventController.js'
 import { validateEventInput } from '../middleware/validation-middleware.js'
 import {
@@ -22,19 +22,20 @@ router
   .route('/')
   .get(getAllEvents)
   .post(
-    validateEventInput,
+    upload.single('image'),
     authenticateUser,
     authorizePermissions('ADMIN', 'EVENT_PLANNER'),
-    upload.single('photo'),
+    validateEventInput,
     createEvent
   )
 
-// router.route('/stats').get(showStats)
+router.route('/user-events').get(authenticateUser, getUserEvents)
 
 router
   .route('/:id')
   .get(getEvent)
   .patch(
+    upload.single('image'),
     validateEventInput,
     authenticateUser,
     authorizePermissions('ADMIN', 'EVENT_PLANNER'),

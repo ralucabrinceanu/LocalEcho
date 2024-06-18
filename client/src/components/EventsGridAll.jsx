@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link, useLoaderData } from 'react-router-dom'
-import theatre from '../assets/theatre.jpg'
-import { EventStatus } from '../../../utils/constants'
+import defaultEventImage from '../assets/no-event-photo.png'
 
 const EventsGridAll = () => {
   const { events } = useLoaderData()
@@ -11,24 +10,28 @@ const EventsGridAll = () => {
     return new Date(dateString).toLocaleDateString('en-US', options)
   }
 
-  const visibleEvents = events.filter(
-    (event) => event.eventStatus !== 'COMPLETED'
-  )
+  const currentDate = new Date()
+
+  const visibleEvents = events.filter((event) => {
+    const eventEndDate = new Date(event.endDate)
+    return event.eventStatus !== 'COMPLETED' && eventEndDate >= currentDate
+  })
 
   return (
     <div className="pt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {visibleEvents.map((event) => {
-        const { title, startDate } = event
+        const { title, startDate, endDate, image } = event
+        const eventImage = image || defaultEventImage
+
         return (
           <Link
             key={event.id}
             to={`/events/${event.id}`}
             className="card w-full shadow-xl hover:shadow-2xl transition duration-300"
           >
-            {/* //TODO: add img in events table */}
             <figure className="px-4 pt-4">
               <img
-                src={theatre}
+                src={eventImage}
                 alt={title}
                 className="rounded-xl h-64 md:h-48 w-full object-cover"
               />

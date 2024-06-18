@@ -1,15 +1,14 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, redirect } from 'react-router-dom'
-import customFetch from '../utils'
 import { toast } from 'react-toastify'
-import { FormInput, Header, Navbar, SubmitBtn } from '../components'
 import { useSelector } from 'react-redux'
-import { useEffect } from 'react'
+import customFetch from '../utils'
+import { FormInput, SubmitBtn } from '../components'
+import defaultAvatar from '../assets/no-photo-user.jpg'
 
 export const action = async ({ request }) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
-  console.log(data)
 
   const file = formData.get('avatar')
   if (file && file.size > 500000) {
@@ -39,17 +38,16 @@ const Profile = () => {
     console.log('User data from Redux:', { firstName, lastName, email })
   }, [firstName, lastName, email])
 
+  const avatarToShow = avatar ? avatar : defaultAvatar
+
   return (
     <>
-      <Header />
-      <Navbar />
-
       <section className="h-full grid place-items-center mt-20">
         <div className="flex items-center justify-center">
           <h3 className="text-center text-3xl font-bold">Your Account</h3>
           <div className="avatar ml-7">
             <div className="w-20 rounded">
-              <img src={avatar} alt="avatar" />
+              <img src={avatarToShow} alt="avatar" />
             </div>
           </div>
         </div>

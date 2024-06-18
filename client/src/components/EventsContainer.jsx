@@ -21,7 +21,6 @@ const EventsContainer = () => {
 
   return (
     <>
-      {/* HEADER */}
       <div className="flex justify-between items-center mt-8 border-b border-base-300 pb-5">
         <h4 className="font-medium text-md">
           {totalEvents} event{totalEvents > 1 && 's'}
@@ -48,7 +47,6 @@ const EventsContainer = () => {
         </div>
       </div>
 
-      {/* PRODUCTS */}
       <div>
         {totalEvents === 0 ? (
           <h5 className="text-2xl mt-16">No events matched your search...</h5>

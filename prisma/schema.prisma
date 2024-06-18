@@ -122,7 +122,7 @@ model SingleOrderItem {
   id       String  @id @default(uuid())
   price    Int
   amount   Int
-  ticket   Tickets @relation(fields: [ticketId], references: [id])
+  ticket   Tickets @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   ticketId String  @map("ticket_id")
   order    Orders  @relation(fields: [orderId], references: [id], onDelete: Cascade)
   orderId  String  @map("order_id")

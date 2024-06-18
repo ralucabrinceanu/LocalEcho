@@ -64,7 +64,7 @@ const formatEventDate = (startDate, endDate) => {
 
 const EventTickets = () => {
   const { event, tickets } = useLoaderData()
-  const { title, startDate, endDate } = event
+  const { title, startDate, endDate, image } = event
   // console.log(tickets)
 
   const [amounts, setAmounts] = useState(
@@ -98,7 +98,7 @@ const EventTickets = () => {
     .map((ticket) => ({
       ticketId: ticket.id,
       amount: amounts[ticket.id],
-      price: ticket.price, //! adauga alte  chestii aici daca vrei
+      price: ticket.price, //! adauga alte chestii aici daca vrei
     }))
     .filter((item) => item.amount > 0)
 
@@ -113,13 +113,20 @@ const EventTickets = () => {
     }
   }
 
+  if (tickets.length === 0) {
+    return (
+      <section className="mt-6">
+        <h1 className="text-3xl font-bold">No tickets available...</h1>
+      </section>
+    )
+  }
+
   return (
     <>
       <section>
         <div className="mt-6 grid gap-y-8 lg:grid-cols-2 lg:gap-x-16">
-          {/* //TODO image */}
           <img
-            src={theatre}
+            src={image}
             alt={title}
             className="w-96 h-96 object-cover rounded-lg lg:w-full"
           />

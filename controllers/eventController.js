@@ -2,7 +2,11 @@ import { StatusCodes } from 'http-status-codes'
 import cloudinary from 'cloudinary'
 import { promises as fs } from 'fs'
 import dayjs from 'dayjs'
-import { NotFoundError, UnauthorizedError } from '../errors/customErrors.js'
+import {
+  BadRequestError,
+  NotFoundError,
+  UnauthorizedError,
+} from '../errors/customErrors.js'
 import { PrismaClient } from '@prisma/client'
 import { EventStatus, EventCategory } from '@prisma/client'
 const prisma = new PrismaClient()
@@ -96,6 +100,18 @@ export const getAllEvents = async (req, res) => {
   })
 }
 
+export const getUserEvents = async (req, res) => {
+  const user = await prisma.users.findUnique({ where: { id: req.user.userId } })
+  if (!user) throw new NotFoundError(`No user with id ${id}`)
+
+  const events = await prisma.events.findMany({
+    where: { createdById: user.id },
+  })
+  if (!events) throw new NotFoundError(`No events created by ${user}`)
+
+  res.status(StatusCodes.OK).json({ events })
+}
+
 export const createEvent = async (req, res) => {
   const {
     title,
@@ -105,27 +121,27 @@ export const createEvent = async (req, res) => {
     venueId,
     eventStatus,
     eventCategory,
+    image,
+    imagePublicId,
   } = req.body
   req.body.createdById = req.user.userId
 
   const venue = await prisma.venues.findUnique({ where: { id: venueId } })
   if (!venue) throw new NotFoundError(`No venue with id ${venueId}`)
-  const venueIdDb = venue.id
 
-  const currentDate = new Date()
+  let addEventData = { ...req.body }
+  addEventData.createdAt = new Date()
+
+  if (req.file) {
+    const response = await cloudinary.v2.uploader.upload(req.file.path)
+    await fs.unlink(req.file.path)
+    addEventData.image = response.secure_url
+    addEventData.imagePublicId = response.public_id
+  }
+  console.log('ADD EVENT DATA', addEventData)
 
   const event = await prisma.events.create({
-    data: {
-      title,
-      description,
-      startDate,
-      endDate,
-      venueId: venueIdDb,
-      eventStatus,
-      eventCategory,
-      createdById: req.body.createdById,
-      createdAt: currentDate,
-    },
+    data: addEventData,
   })
 
   res.status(StatusCodes.CREATED).json({ event })
@@ -148,6 +164,8 @@ export const updateEvent = async (req, res) => {
     venueId,
     eventStatus,
     eventCategory,
+    image,
+    imagePublicId,
   } = req.body
 
   const venue = await prisma.venues.findUnique({ where: { id: venueId } })
@@ -160,18 +178,35 @@ export const updateEvent = async (req, res) => {
   if (event.createdById !== req.user.userId && req.user.role[0] != 'ADMIN')
     throw new UnauthorizedError('Not authorized to update this event')
 
+  let updatedEventData = { ...req.body }
+  if (req.file) {
+    const response = await cloudinary.v2.uploader.upload(req.file.path)
+    await fs.unlink(req.file.path)
+    updatedEventData.image = response.secure_url
+    updatedEventData.imagePublicId = response.public_id
+  }
+  if (req.file && event.imagePublicId) {
+    await cloudinary.v2.uploader.destroy(event.imagePublicId)
+  }
+
+  // const updatedEvent = await prisma.events.update({
+  //   where: { id },
+  //   data: {
+  //     title,
+  //     description,
+  //     startDate,
+  //     endDate,
+  //     venueId: venueIdDb,
+  //     eventStatus,
+  //     eventCategory,
+  //   },
+  // })
+
   const updatedEvent = await prisma.events.update({
     where: { id },
-    data: {
-      title,
-      description,
-      startDate,
-      endDate,
-      venueId: venueIdDb,
-      eventStatus,
-      eventCategory,
-    },
+    data: updatedEventData,
   })
+
   res
     .status(StatusCodes.OK)
     .json({ msg: 'Event modified', event: updatedEvent })

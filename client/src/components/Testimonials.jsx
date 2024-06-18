@@ -54,7 +54,7 @@ const Testimonials = () => {
 
   if (zeroTestimonial) {
     return (
-      <div className="pt-24 flex flex-col items-center">
+      <div className="pt-24 flex flex-col">
         <SectionTitle text="Testimonials" />
         <p className="text-gray-600 text-lg mt-5">No testimonials available.</p>
       </div>

@@ -27,10 +27,15 @@ export const loader = async ({ params }) => {
 export const action = async ({ request, params }) => {
   const formData = await request.formData()
   const data = Object.fromEntries(formData)
-  console.log(data)
+
+  const file = formData.get('image')
+  if (file && file.size > 500000) {
+    toast.error('Image size too large')
+    return null
+  }
 
   try {
-    await customFetch.patch(`/events/${params.id}`, data)
+    await customFetch.patch(`/events/${params.id}`, formData)
     toast.success('Event updated successfully')
     return redirect(`/events/${params.id}`)
   } catch (error) {
@@ -66,6 +71,7 @@ const EditEvent = () => {
         <Form
           method="post"
           className="card grid grid-cols-2 gap-10 p-10 bg-base-100 shadow-lg"
+          encType="multipart/form-data"
         >
           <FormInput
             type="text"
@@ -112,6 +118,19 @@ const EditEvent = () => {
               })}
             </select>
           </div>
+
+          <label className="form-control ">
+            <div className="label">
+              <span className="label-text capitalize">Select A Photo</span>
+            </div>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              className="file-input file-input-bordered w-full max-w-xs"
+              accept="image/*"
+            />
+          </label>
 
           <div className="col-span-2 text-center">
             <div className="mt-4">
