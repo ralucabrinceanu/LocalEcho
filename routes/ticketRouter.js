@@ -6,6 +6,8 @@ import {
   createTicket,
   updateTicket,
   deleteTicket,
+  getSingleEventTicket,
+  getSingleTicket,
 } from '../controllers/ticketController.js'
 import {
   validateTicketInput,
@@ -17,15 +19,11 @@ import {
 } from '../middleware/auth-middleware.js'
 
 router.route('/').get(getAllTickets)
-// .post(
-//   authenticateUser,
-//   authorizePermissions('ADMIN', 'EVENT_PLANNER'),
-//   validateTicketInput,
-//   createTicket
-// )
 
 router
   .route('/:id')
+  // .get(getSingleEventTicket)
+  .get(getSingleTicket)
   .post(
     authenticateUser,
     authorizePermissions('ADMIN', 'EVENT_PLANNER'),

@@ -94,7 +94,7 @@ const Admin = () => {
               <div className="stat-figure text-indigo-500">
                 <VscFeedback />
               </div>
-              <div className="stat-title">Feedback</div>
+              <div className="stat-title">Testimonials</div>
               <div className="stat-value">{testimonials.length}</div>
             </div>
           </div>

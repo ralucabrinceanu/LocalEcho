@@ -22,7 +22,7 @@ export const action = async ({ request, params }) => {
   try {
     await customFetch.post(`/tickets/${params.id}`, data)
     toast.success('Tickets added successfully')
-    return redirect('/events')
+    return redirect(`/admin-ep/${params.id}/tickets`)
   } catch (error) {
     console.log(error)
     toast.error(error?.response?.data?.msg)
@@ -36,8 +36,6 @@ const AddTicket = () => {
   return (
     <HasPermission requiredRoles={['ADMIN', 'EVENT_PLANNER']}>
       <>
-        <Header />
-        <Navbar />
         <section className="h-full grid place-items-center mt-10">
           <h3 className="text-center text-3xl font-bold">Create Tickets</h3>
           <Form

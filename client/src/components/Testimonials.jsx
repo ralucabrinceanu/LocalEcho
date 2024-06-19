@@ -1,12 +1,11 @@
-import React from 'react'
-import SectionTitle from './SectionTitle'
+import React, { useState } from 'react'
 import { FaStar } from 'react-icons/fa'
 import { FaRegStar } from 'react-icons/fa'
 import { IoIosArrowBack } from 'react-icons/io'
 import { IoIosArrowForward } from 'react-icons/io'
-import { useState } from 'react'
-import testimonialPhoto from '../assets/testimonialUser.jpg'
 import { useLoaderData } from 'react-router-dom'
+import noPhotoUser from '../assets/no-photo-user.jpg'
+import SectionTitle from './SectionTitle'
 
 const Testimonials = () => {
   const { testimonials, users } = useLoaderData()
@@ -75,7 +74,7 @@ const Testimonials = () => {
             {user && user.avatar ? (
               <img src={user.avatar} alt="" />
             ) : (
-              <img src={testimonialPhoto} alt="user" />
+              <img src={noPhotoUser} alt="user" />
             )}
           </div>
         </div>

@@ -90,7 +90,7 @@ const EventsCrud = () => {
                           </button>
                         </Form>
                         <Link
-                          to={`/add-ticket/${id}`}
+                          to={`/admin-ep/${id}/tickets`}
                           className="btn btn-accent"
                         >
                           Tickets

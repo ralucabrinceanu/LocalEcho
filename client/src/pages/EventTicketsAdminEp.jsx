@@ -1,25 +1,31 @@
 import React from 'react'
-import customFetch from '../utils'
+import { Link, useLoaderData } from 'react-router-dom'
 import { TicketsPerEvent } from '../components'
+import customFetch from '../utils'
 
 export const loader = async ({ params }) => {
   const response = await customFetch.get(`/events/${params.id}`)
   const event = response.data.event
-  // console.log('EVENT: ', event)
 
   const tickResp = await customFetch.get(`/events/${params.id}/tickets`)
   const tickets = tickResp.data.tickets
-  // console.log('TICKETS: ', tickets)
 
   return { event, tickets }
 }
 
-const EventTickets = () => {
+const EventTicketsAdminEp = () => {
+  const event = useLoaderData()
+  const eventId = event.event.id
+
   return (
     <>
-      <TicketsPerEvent />
+      <Link to={`/add-ticket/${eventId}`} className="btn btn-accent">
+        Create Tickets
+      </Link>
+
+      <TicketsPerEvent showBuyButton={false} />
     </>
   )
 }
 
-export default EventTickets
+export default EventTicketsAdminEp

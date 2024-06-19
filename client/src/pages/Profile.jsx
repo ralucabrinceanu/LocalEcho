@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Form, redirect } from 'react-router-dom'
 import { toast } from 'react-toastify'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import customFetch from '../utils'
 import { FormInput, SubmitBtn } from '../components'
 import defaultAvatar from '../assets/no-photo-user.jpg'
+import { updateUser } from '../features/user/userSlice'
 
 export const action = async ({ request }) => {
   const formData = await request.formData()
@@ -16,7 +17,12 @@ export const action = async ({ request }) => {
     return null
   }
   try {
-    await customFetch.patch('/users/update-user', formData)
+    const response = await customFetch.patch('/users/update-user', formData)
+    const updatedUser = await response.data.user
+
+    const dispatch = useDispatch()
+    dispatch(updateUser(updatedUser))
+
     toast.success('Profile updated successfully')
     return redirect('/')
   } catch (error) {
@@ -28,6 +34,7 @@ export const action = async ({ request }) => {
 const Profile = () => {
   //! f imp
   // console.log(useSelector((store) => console.log(store)))
+  const dispatch = useDispatch()
 
   const { firstName, lastName, email, avatar } = useSelector(
     (store) => store.userState.user
@@ -39,6 +46,26 @@ const Profile = () => {
   }, [firstName, lastName, email])
 
   const avatarToShow = avatar ? avatar : defaultAvatar
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    const formData = new FormData(event.target)
+    const file = formData.get('avatar')
+    if (file && file.size > 500000) {
+      toast.error('Image size too large')
+      return
+    }
+    try {
+      const response = await customFetch.patch('/users/update-user', formData)
+      const updatedUser = await response.data.user
+
+      dispatch(updateUser(updatedUser))
+
+      toast.success('Profile updated successfully')
+    } catch (error) {
+      toast.error(error?.response?.data?.msg)
+    }
+  }
 
   return (
     <>
@@ -52,7 +79,12 @@ const Profile = () => {
           </div>
         </div>
 
-        <Form method="post" className="form mt-7" encType="multipart/form-data">
+        <Form
+          method="post"
+          className="form mt-7"
+          encType="multipart/form-data"
+          onSubmit={handleSubmit}
+        >
           <label className="form-control ">
             <div className="label">
               <span className="label-text capitalize">Select A Photo</span>

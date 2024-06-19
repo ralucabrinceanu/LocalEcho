@@ -32,6 +32,9 @@ import {
   OrdersAdmin,
   ChangeRole,
   EventsCrudAdmin,
+  AddTestimonial,
+  EventTicketsAdminEp,
+  EditTicket,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -56,6 +59,7 @@ import { loader as cartLoader } from './pages/Cart'
 import { loader as checkoutLoader } from './pages/Checkout'
 import { loader as ordersLoader } from './pages/Orders'
 import { loader as ordersAdminLoader } from './pages/OrdersAdmin'
+import { loader as adminepLoader } from './pages/EventTicketsAdminEp'
 
 // actions
 import { action as registerAction } from './pages/Register'
@@ -74,6 +78,8 @@ import { action as deleteTestimonial } from './pages/DeleteTestimonial'
 import { action as editVenueAction } from './pages/EditVenue'
 import { action as createTicketAction } from './pages/AddTicket'
 import { action as changeRoleAction } from './pages/ChangeRole'
+import { action as deleteTicketsAction } from './pages/DeleteTickets'
+import { action as editTicketAction } from './pages/EditTicket'
 
 const router = createBrowserRouter([
   {
@@ -137,6 +143,11 @@ const router = createBrowserRouter([
             action: deleteTestimonial,
           },
         ],
+      },
+      {
+        path: '/user/add-testimonial',
+        element: <AddTestimonial />,
+        errorElement: <ErrorElement />,
       },
       {
         path: '/event-planner',
@@ -236,6 +247,22 @@ const router = createBrowserRouter([
         element: <EventTickets />,
         errorElement: <ErrorElement />,
         loader: eventTicketLoader,
+      },
+      {
+        path: '/admin-ep/:id/tickets',
+        element: <EventTicketsAdminEp />,
+        errorElement: <ErrorElement />,
+        loader: adminepLoader,
+      },
+      {
+        path: '/delete-tickets/:id',
+        errorElement: <ErrorElement />,
+        action: deleteTicketsAction,
+      },
+      {
+        path: '/edit-ticket/:id',
+        errorElement: <ErrorElement />,
+        action: editTicketAction,
       },
       {
         path: '/update-profile',

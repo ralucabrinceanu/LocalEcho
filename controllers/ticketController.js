@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
-import { NotFoundError } from '../errors/customErrors.js'
+import { BadRequestError, NotFoundError } from '../errors/customErrors.js'
 import { PrismaClient, TicketType } from '@prisma/client'
 const prisma = new PrismaClient()
 
@@ -8,35 +8,34 @@ export const getAllTickets = async (req, res) => {
   res.status(StatusCodes.OK).json({ tickets, count: tickets.length })
 }
 
-export const getSingleEventTicket = async (req, res) => {
-  const { id: eventId } = req.params
+// nu mai stiu pentru ce am facut asta
+// export const getSingleEventTicket = async (req, res) => {
+//   const { id: eventId } = req.params
 
-  const event = await prisma.events.findUnique({ where: { id: eventId } })
-  if (!event) throw new NotFoundError(`No event with id ${eventId}`)
+//   const event = await prisma.events.findUnique({ where: { id: eventId } })
+//   if (!event) throw new NotFoundError(`No event with id ${eventId}`)
 
-  const tickets = await prisma.tickets.findMany({
-    where: { eventId },
-  })
-
-  res.status(StatusCodes.OK).json({ tickets, count: tickets.length })
-}
-
-// export const createTicket = async (req, res) => {
-//   const { eventId, ticketType, ticketsAvailable, price } = req.body
-//   req.body.createdById = req.user.userId
-
-//   const ticket = await prisma.tickets.create({
-//     data: {
-//       eventId,
-//       ticketType,
-//       ticketsAvailable,
-//       price,
-//       createdById: req.body.createdById,
-//     },
+//   const tickets = await prisma.tickets.findMany({
+//     where: { eventId },
 //   })
 
-//   res.status(StatusCodes.CREATED).json({ ticket })
+//   res.status(StatusCodes.OK).json({ tickets, count: tickets.length })
 // }
+
+export const getSingleTicket = async (req, res) => {
+  const { id: ticketId } = req.params
+
+  const eventTicket = await prisma.tickets.findUnique({
+    where: { id: ticketId },
+    include: {
+      event: true,
+    },
+  })
+  console.log(eventTicket.event)
+  const response = eventTicket.event
+
+  res.status(StatusCodes.OK).json({ response })
+}
 
 export const createTicket = async (req, res) => {
   const { ticketType, ticketsAvailable, price } = req.body
@@ -47,15 +46,38 @@ export const createTicket = async (req, res) => {
   if (!event) throw new NotFoundError(`No event with id ${id}`)
   console.log('EVENT: ', event)
 
-  const ticket = await prisma.tickets.create({
-    data: {
-      ticketType,
-      ticketsAvailable,
-      price,
-      createdById: req.body.createdById,
+  const existingTicket = await prisma.tickets.findFirst({
+    where: {
       eventId: eventId,
+      ticketType: ticketType,
     },
   })
+
+  let ticket
+  if (existingTicket) {
+    if (existingTicket.price !== price) {
+      throw new BadRequestError(
+        `Price for ticket type ${ticketType} must be ${existingTicket.price}`
+      )
+    }
+
+    ticket = await prisma.tickets.update({
+      where: { id: existingTicket.id },
+      data: {
+        ticketsAvailable: existingTicket.ticketsAvailable + ticketsAvailable,
+      },
+    })
+  } else {
+    ticket = await prisma.tickets.create({
+      data: {
+        ticketType,
+        ticketsAvailable,
+        price,
+        createdById: req.body.createdById,
+        eventId: eventId,
+      },
+    })
+  }
 
   res.status(StatusCodes.CREATED).json({ ticket })
 }
