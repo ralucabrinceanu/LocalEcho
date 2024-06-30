@@ -2,7 +2,12 @@ import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, NotFoundError } from '../errors/customErrors.js'
 import { PrismaClient } from '@prisma/client'
 import { checkPermissions } from '../utils/checkPermissions.js'
+import Stripe from 'stripe'
+
 const prisma = new PrismaClient()
+const stripe = new Stripe(
+  'sk_test_51PLsLUGw9aMG63Jk72mmdYclbQrA6qlo9oTHloWm1SgQUBWKMYodhAiwpLdIXXWaAC3lt949WEKuHRJZ1RWWrW4e00GcJYlqet'
+)
 
 export const getAllOrders = async (req, res) => {
   const orders = await prisma.orders.findMany()
@@ -44,14 +49,9 @@ export const getCurrentUserOrders = async (req, res) => {
   })
 }
 
-const fakeStripeAPI = async ({ amount, currency }) => {
-  const client_secret = 'someRandomValue'
-  return { client_secret, amount }
-}
-
 export const createOrder = async (req, res) => {
   const { items: cartItems } = req.body
-  //   console.log('ITEM: ', cartItems)
+  // console.log('CART ITEMS', cartItems)
 
   if (!cartItems || cartItems.length < 1)
     throw new BadRequestError('No cart items provided')
@@ -64,29 +64,27 @@ export const createOrder = async (req, res) => {
     const dbTicket = await prisma.tickets.findUnique({
       where: { id: item.ticketId },
     })
+    // console.log('TICKET', dbTicket)
     if (!dbTicket) throw new NotFoundError(`No ticket with id ${item.ticketId}`)
 
     const { id, price } = dbTicket
-    // console.log(id, price)
     const singleOrderItem = {
       amount: item.amount,
       price,
       ticketId: id,
     }
 
-    // add item to order
     orderItems = [...orderItems, singleOrderItem]
-    // calculate subtotal
     subtotal += item.amount * price
   }
-  //   console.log('ORDER ITEMS', orderItems)
-  //   console.log('SUBTOTAL', subtotal)
   const total = subtotal
 
-  //   get client secret
-  const paymentIntent = await fakeStripeAPI({
+  const paymentIntent = await stripe.paymentIntents.create({
     amount: total,
     currency: 'ron',
+    automatic_payment_methods: {
+      enabled: true,
+    },
   })
 
   const order = await prisma.orders.create({
@@ -108,6 +106,7 @@ export const createOrder = async (req, res) => {
     ...order,
     orderItems: orderItems,
   }
+
   res.status(StatusCodes.CREATED).json({
     order: orderWithItems,
     clientSecret: order.clientSecret,

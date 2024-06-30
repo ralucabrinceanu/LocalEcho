@@ -27,7 +27,6 @@ import {
   AddTicket,
   EventTickets,
   Cart,
-  Checkout,
   Orders,
   OrdersAdmin,
   ChangeRole,
@@ -35,6 +34,7 @@ import {
   AddTestimonial,
   EventTicketsAdminEp,
   EditTicket,
+  Checkout,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -56,7 +56,6 @@ import { loader as testimonialsLoader } from './pages/Testimonials'
 import { loader as editVenueLoader } from './pages/EditVenue'
 import { loader as eventTicketLoader } from './pages/EventTickets'
 import { loader as cartLoader } from './pages/Cart'
-import { loader as checkoutLoader } from './pages/Checkout'
 import { loader as ordersLoader } from './pages/Orders'
 import { loader as ordersAdminLoader } from './pages/OrdersAdmin'
 import { loader as adminepLoader } from './pages/EventTicketsAdminEp'
@@ -112,7 +111,6 @@ const router = createBrowserRouter([
         path: 'checkout',
         element: <Checkout />,
         errorElement: <ErrorElement />,
-        loader: checkoutLoader(store),
       },
       {
         path: 'orders/showAllMyOrders',

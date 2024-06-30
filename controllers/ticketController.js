@@ -8,19 +8,18 @@ export const getAllTickets = async (req, res) => {
   res.status(StatusCodes.OK).json({ tickets, count: tickets.length })
 }
 
-// nu mai stiu pentru ce am facut asta
-// export const getSingleEventTicket = async (req, res) => {
-//   const { id: eventId } = req.params
+export const getSingleEventTicket = async (req, res) => {
+  const { id: eventId } = req.params
 
-//   const event = await prisma.events.findUnique({ where: { id: eventId } })
-//   if (!event) throw new NotFoundError(`No event with id ${eventId}`)
+  const event = await prisma.events.findUnique({ where: { id: eventId } })
+  if (!event) throw new NotFoundError(`No event with id ${eventId}`)
 
-//   const tickets = await prisma.tickets.findMany({
-//     where: { eventId },
-//   })
+  const tickets = await prisma.tickets.findMany({
+    where: { eventId },
+  })
 
-//   res.status(StatusCodes.OK).json({ tickets, count: tickets.length })
-// }
+  res.status(StatusCodes.OK).json({ tickets, count: tickets.length })
+}
 
 export const getSingleTicket = async (req, res) => {
   const { id: ticketId } = req.params

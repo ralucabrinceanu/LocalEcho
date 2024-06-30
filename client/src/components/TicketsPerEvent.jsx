@@ -5,6 +5,8 @@ import { MdDeleteOutline } from 'react-icons/md'
 import { AiOutlineEdit } from 'react-icons/ai'
 import AmountButtons from './AmountButtons'
 import SubmitBtn from './SubmitBtn'
+import { addItem } from '../features/cart/cartSlice'
+import { toast } from 'react-toastify'
 
 const formatDate = (dateString, options = {}) => {
   const defaultOptions = {

@@ -6,7 +6,7 @@ import {
   createTicket,
   updateTicket,
   deleteTicket,
-  getSingleEventTicket,
+  // getSingleEventTicket,
   getSingleTicket,
 } from '../controllers/ticketController.js'
 import {

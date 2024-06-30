@@ -17,6 +17,7 @@ export const stripeController = async (req, res) => {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: calculateOrderAmount(),
     currency: 'ron',
+    automatic_payment_methods: { enabled: true },
   })
 
   res.send({ clientSecret: paymentIntent.client_secret })
