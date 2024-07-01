@@ -9,7 +9,7 @@ const links = [
   { id: 4, url: 'admin', text: 'admin' },
   { id: 5, url: 'event-planner', text: 'event planner' },
   { id: 6, url: 'cart', text: 'cart' },
-  { id: 7, url: 'checkout', text: 'checkout' },
+  // { id: 7, url: 'checkout', text: 'checkout' },
   { id: 8, url: 'orders/showAllMyOrders', text: 'orders' },
 ]
 

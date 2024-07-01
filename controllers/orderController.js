@@ -2,12 +2,13 @@ import { StatusCodes } from 'http-status-codes'
 import { BadRequestError, NotFoundError } from '../errors/customErrors.js'
 import { PrismaClient } from '@prisma/client'
 import { checkPermissions } from '../utils/checkPermissions.js'
-import Stripe from 'stripe'
+import stripePackage from 'stripe'
 
 const prisma = new PrismaClient()
-const stripe = new Stripe(
-  'sk_test_51PLsLUGw9aMG63Jk72mmdYclbQrA6qlo9oTHloWm1SgQUBWKMYodhAiwpLdIXXWaAC3lt949WEKuHRJZ1RWWrW4e00GcJYlqet'
-)
+// const stripe = new Stripe(
+//   'sk_test_51PLsLUGw9aMG63Jk72mmdYclbQrA6qlo9oTHloWm1SgQUBWKMYodhAiwpLdIXXWaAC3lt949WEKuHRJZ1RWWrW4e00GcJYlqet'
+// )
+const stripe = stripePackage(process.env.STRIPE_KEY)
 
 export const getAllOrders = async (req, res) => {
   const orders = await prisma.orders.findMany()
@@ -67,6 +68,10 @@ export const createOrder = async (req, res) => {
     // console.log('TICKET', dbTicket)
     if (!dbTicket) throw new NotFoundError(`No ticket with id ${item.ticketId}`)
 
+    if (item.amount > dbTicket.ticketsAvailable) {
+      throw new BadRequestError(`Not enough tickets available...`)
+    }
+
     const { id, price } = dbTicket
     const singleOrderItem = {
       amount: item.amount,
@@ -91,6 +96,7 @@ export const createOrder = async (req, res) => {
     data: {
       total,
       clientSecret: paymentIntent.client_secret,
+      paymentIntentId: paymentIntent.id,
       orderedById: req.user.userId,
       orderItems: {
         create: orderItems.map((item) => ({
@@ -101,6 +107,7 @@ export const createOrder = async (req, res) => {
       },
     },
   })
+  console.log(paymentIntent.status)
 
   const orderWithItems = {
     ...order,
@@ -110,23 +117,24 @@ export const createOrder = async (req, res) => {
   res.status(StatusCodes.CREATED).json({
     order: orderWithItems,
     clientSecret: order.clientSecret,
+    paymentIntentId: order.paymentIntentId,
   })
 }
 
-export const updateOrder = async (req, res) => {
-  const { id } = req.params
-  const { paymentIntentId } = req.body
+// export const updateOrder = async (req, res) => {
+//   const { id } = req.params
+//   const { paymentIntentId } = req.body
 
-  const order = await prisma.orders.findUnique({ where: { id } })
-  if (!order) throw new NotFoundError(`No order with id ${id}`)
-  //   console.log('ORDER', order)
+//   const order = await prisma.orders.findUnique({ where: { id } })
+//   if (!order) throw new NotFoundError(`No order with id ${id}`)
+//   //   console.log('ORDER', order)
 
-  checkPermissions(req.user, order.orderedById)
+//   checkPermissions(req.user, order.orderedById)
 
-  const updatedOrder = await prisma.orders.update({
-    where: { id },
-    data: { paymentIntentId, status: 'PAID' },
-  })
+//   const updatedOrder = await prisma.orders.update({
+//     where: { id },
+//     data: { paymentIntentId, status: 'PAID' },
+//   })
 
-  res.status(StatusCodes.OK).json({ order: updatedOrder })
-}
+//   res.status(StatusCodes.OK).json({ order: updatedOrder })
+// }

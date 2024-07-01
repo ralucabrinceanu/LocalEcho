@@ -6,3 +6,11 @@ const customFetch = axios.create({
 })
 
 export default customFetch
+
+export const formatPrice = (price) => {
+  const roni = new Intl.NumberFormat('ro-RO', {
+    style: 'currency',
+    currency: 'RON',
+  }).format((price / 100).toFixed(2))
+  return roni
+}

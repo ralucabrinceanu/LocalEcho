@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLoaderData } from 'react-router-dom'
+import { formatPrice } from '../utils'
 
 const OrderList = () => {
   const { orders, meta, users } = useLoaderData()
@@ -69,7 +70,7 @@ const OrderList = () => {
                 <tr key={id}>
                   <td>{userName}</td>
                   <td>{getUserEmail(order.orderedById)}</td>
-                  <td>{total} RON</td>
+                  <td>{formatPrice(total)}</td>
                   <td>{formatDateTime(createdAt)}</td>
                 </tr>
               )

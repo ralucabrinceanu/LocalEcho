@@ -6,7 +6,7 @@ import {
   createOrder,
   getSingleOrder,
   getCurrentUserOrders,
-  updateOrder,
+  // updateOrder,
 } from '../controllers/orderController.js'
 import {
   authenticateUser,
@@ -20,9 +20,7 @@ router
 
 router.route('/showAllMyOrders').get(authenticateUser, getCurrentUserOrders)
 
-router
-  .route('/:id')
-  .get(authenticateUser, getSingleOrder)
-  .patch(authenticateUser, updateOrder)
+router.route('/:id').get(authenticateUser, getSingleOrder)
+// .patch(authenticateUser, updateOrder)
 
 export default router

@@ -57,7 +57,7 @@ app.get('/', (req, res) => {
 })
 
 // stripe
-app.post('/project/stripe', stripeController)
+// app.post('/project/stripe', stripeController)
 
 // routes
 app.use('/project/venues', venueRouter)
@@ -66,7 +66,7 @@ app.use('/project/events', eventRouter)
 app.use('/project/users', userRouter)
 app.use('/project/testimonials', testimonialRouter)
 app.use('/project/tickets', ticketRouter)
-app.use('/project/orders', orderRouter)
+app.use('/project/orders', orderRouter) // aici e stripe
 
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, './public', 'index.html'))

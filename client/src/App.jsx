@@ -35,6 +35,7 @@ import {
   EventTicketsAdminEp,
   EditTicket,
   Checkout,
+  ConfirmPayment,
 } from './pages'
 
 import { ErrorElement } from './components'
@@ -110,6 +111,11 @@ const router = createBrowserRouter([
       {
         path: 'checkout',
         element: <Checkout />,
+        errorElement: <ErrorElement />,
+      },
+      {
+        path: 'thankYou',
+        element: <ConfirmPayment />,
         errorElement: <ErrorElement />,
       },
       {

@@ -1,11 +1,33 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { editItem, removeItem } from '../features/cart/cartSlice'
 import AmountButtons from './AmountButtons'
 import { useLoaderData } from 'react-router-dom'
+import { formatPrice } from '../utils'
 
 const CartItem = ({ orderItem }) => {
   const dispatch = useDispatch()
+
+  const { amount, price, ticketId } = orderItem
+  const { tickets, events } = useLoaderData()
+
+  const ticket = tickets.find((ticket) => ticket.id === ticketId)
+  const event = ticket
+    ? events.find((event) => event.id === ticket.eventId)
+    : null
+
+  const currentDate = new Date().getTime()
+  const startEvent = new Date(event.startDate).getTime()
+
+  useEffect(() => {
+    if (event && startEvent < currentDate) {
+      dispatch(removeItem({ ticketId }))
+    }
+  }, [dispatch, event, ticketId])
+
+  if (!ticket || (event && startEvent < currentDate)) {
+    return null
+  }
 
   const removeItemFromCart = () => {
     dispatch(removeItem({ ticketId }))
@@ -17,21 +39,12 @@ const CartItem = ({ orderItem }) => {
     }
   }
 
-  const { amount, price, ticketId } = orderItem
-  const { tickets, events } = useLoaderData()
-
   const getTicketType = () => {
-    const ticket = tickets.find((ticket) => ticket.id === ticketId)
     return ticket ? ticket.ticketType : 'Unknown Ticket Type'
   }
 
   const getEventName = () => {
-    const ticket = tickets.find((ticket) => ticket.id === ticketId)
-    if (ticket) {
-      const event = events.find((event) => event.id === ticket.eventId)
-      return event ? event.title : 'Unknown Event'
-    }
-    return 'Loading...'
+    return event ? event.title : 'Unknown Event'
   }
 
   return (
@@ -67,7 +80,7 @@ const CartItem = ({ orderItem }) => {
 
       {/* PRICE  */}
       <div className="flex items-center sm:ml-auto">
-        <p className="font-medium">{price} RON</p>
+        <p className="font-medium">{formatPrice(price)}</p>
       </div>
     </article>
   )

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { loadStripe } from '@stripe/stripe-js'
 import { Elements } from '@stripe/react-stripe-js'
 import { CheckoutForm } from '../components'
-import customFetch from '../utils'
+import customFetch, { formatPrice } from '../utils'
 import { useSelector } from 'react-redux'
 
 const stripePromise = loadStripe(
@@ -12,25 +12,24 @@ const stripePromise = loadStripe(
 const Checkout = () => {
   const [clientSecret, setClientSecret] = useState('')
 
+  const orderItems = useSelector((store) => store.cartState.orderItems)
   const total = useSelector((store) => store.cartState.total)
 
   useEffect(() => {
-    customFetch
-      .post('/stripe', { total: total })
-      .then((res) => {
-        // console.log(res.data.clientSecret)
+    const createOrder = async () => {
+      try {
+        const res = await customFetch.post('/orders', { items: orderItems })
         setClientSecret(res.data.clientSecret)
-      })
-      .catch((err) => {
+      } catch (err) {
         console.error('Error creating payment intent: ', err)
-      })
-  }, [])
+      }
+    }
+
+    createOrder()
+  }, [orderItems])
 
   const appearance = {
     theme: 'stripe',
-    variables: {
-      colorPrimary: '#921994',
-    },
   }
   const options = {
     clientSecret,
@@ -39,7 +38,7 @@ const Checkout = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold ">Order Total: {total} RON</h1>
+      <h1 className="text-3xl font-bold ">Order Total: {formatPrice(total)}</h1>
       {stripePromise && clientSecret && (
         <Elements stripe={stripePromise} options={options}>
           <CheckoutForm />

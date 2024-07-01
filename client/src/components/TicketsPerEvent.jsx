@@ -7,6 +7,7 @@ import AmountButtons from './AmountButtons'
 import SubmitBtn from './SubmitBtn'
 import { addItem } from '../features/cart/cartSlice'
 import { toast } from 'react-toastify'
+import { formatPrice } from '../utils'
 
 const formatDate = (dateString, options = {}) => {
   const defaultOptions = {
@@ -101,6 +102,7 @@ const TicketsPerEvent = ({ showBuyButton = true }) => {
       </section>
     )
   }
+
   return (
     <>
       <section>
@@ -128,97 +130,100 @@ const TicketsPerEvent = ({ showBuyButton = true }) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {tickets.map((ticket) => (
-                    <tr className="bg-base-200" key={ticket.id}>
-                      <td>{ticket.ticketType}</td>
-                      <td>{ticket.price} RON</td>
-                      <td>{ticket.ticketsAvailable}</td>
-                      {showBuyButton && (
-                        <td>
-                          <AmountButtons
-                            increase={() => increase(ticket.id)}
-                            decrease={() => decrease(ticket.id)}
-                            amount={amounts[ticket.id]}
-                          />
-                        </td>
-                      )}
-                      {!showBuyButton && (
-                        <td>
-                          <button
-                            className="btn"
-                            onClick={() =>
-                              document
-                                .getElementById(`my_modal_${ticket.id}`)
-                                .showModal()
-                            }
-                          >
-                            <AiOutlineEdit />
-                          </button>
+                  {tickets.map((ticket) => {
+                    const roni = formatPrice(ticket.price)
+                    return (
+                      <tr className="bg-base-200" key={ticket.id}>
+                        <td>{ticket.ticketType}</td>
+                        <td>{roni}</td>
+                        <td>{ticket.ticketsAvailable}</td>
+                        {showBuyButton && (
+                          <td>
+                            <AmountButtons
+                              increase={() => increase(ticket.id)}
+                              decrease={() => decrease(ticket.id)}
+                              amount={amounts[ticket.id]}
+                            />
+                          </td>
+                        )}
+                        {!showBuyButton && (
+                          <>
+                            <td>
+                              <button
+                                className="btn"
+                                onClick={() =>
+                                  document
+                                    .getElementById(`my_modal_${ticket.id}`)
+                                    .showModal()
+                                }
+                              >
+                                <AiOutlineEdit />
+                              </button>
 
-                          <dialog
-                            id={`my_modal_${ticket.id}`}
-                            className="modal"
-                          >
-                            <div className="modal-box">
+                              <dialog
+                                id={`my_modal_${ticket.id}`}
+                                className="modal"
+                              >
+                                <div className="modal-box">
+                                  <Form
+                                    method="post"
+                                    action={`/edit-ticket/${ticket.id}`}
+                                  >
+                                    <h3 className="font-bold text-lg">
+                                      Change ticket data
+                                    </h3>
+                                    <div className="my-4"></div>
+
+                                    <div>
+                                      <label>Tickets available</label>
+                                      <input
+                                        type="number"
+                                        name="ticketsAvailable"
+                                        defaultValue={ticket.ticketsAvailable}
+                                        className="input input-bordered w-52 max-w-xs mb-4"
+                                      />
+                                    </div>
+
+                                    <div>
+                                      <label>Ticket price</label>
+                                      <input
+                                        type="number"
+                                        name="price"
+                                        defaultValue={ticket.price}
+                                        className="input input-bordered w-52 max-w-xs"
+                                      />
+                                    </div>
+
+                                    <SubmitBtn
+                                      className="mt-4 w-52 max-w-xs"
+                                      text="Change"
+                                    />
+                                  </Form>
+
+                                  <form method="dialog">
+                                    <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                                      ✕
+                                    </button>
+                                  </form>
+                                </div>
+                              </dialog>
+                            </td>
+
+                            <td>
                               <Form
                                 method="post"
-                                action={`/edit-ticket/${ticket.id}`}
+                                action={`/delete-tickets/${ticket.id}`}
                               >
-                                <h3 className="font-bold text-lg">
-                                  Change ticket data
-                                </h3>
-                                <div className="my-4"></div>
-
-                                <div>
-                                  <label>Tickets available</label>
-                                  <input
-                                    type="number"
-                                    name="ticketsAvailable"
-                                    defaultValue={ticket.ticketsAvailable}
-                                    className="input input-bordered w-52 max-w-xs mb-4"
-                                  />
-                                </div>
-
-                                <div>
-                                  <label>Ticket price</label>
-                                  <input
-                                    type="number"
-                                    name="price"
-                                    defaultValue={ticket.price}
-                                    className="input input-bordered w-52 max-w-xs"
-                                  />
-                                </div>
-
-                                <SubmitBtn
-                                  className="mt-4 w-52 max-w-xs"
-                                  text="Change"
-                                />
-                              </Form>
-
-                              <form method="dialog">
-                                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
-                                  ✕
+                                <button type="submit">
+                                  <MdDeleteOutline />
                                 </button>
-                              </form>
-                            </div>
-                          </dialog>
-                        </td>
-                      )}
-
-                      {!showBuyButton && (
-                        <td>
-                          <Form
-                            method="post"
-                            action={`/delete-tickets/${ticket.id}`}
-                          >
-                            <button type="submit">
-                              <MdDeleteOutline />
-                            </button>
-                          </Form>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
+                              </Form>
+                            </td>
+                          </>
+                        )}
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
 
@@ -235,6 +240,143 @@ const TicketsPerEvent = ({ showBuyButton = true }) => {
       </section>
     </>
   )
+
+  // return (
+  //   <>
+  //     <section>
+  //       <div className="mt-6 grid gap-y-8 lg:grid-cols-2 lg:gap-x-16">
+  //         <img
+  //           src={image}
+  //           alt={title}
+  //           className="w-96 h-96 object-cover rounded-lg lg:w-full"
+  //         />
+  //         <div>
+  //           <h1 className="capitalize text-3xl font-bold">{title}</h1>
+  //           <p className="mt-3 text-xl">
+  //             {formatEventDate(startDate, endDate)}
+  //           </p>
+  //           <div className="overflow-x-auto mt-10">
+  //             <table className="table text-center">
+  //               <thead>
+  //                 <tr>
+  //                   <th>Category</th>
+  //                   <th>Price</th>
+  //                   <th>Available</th>
+  //                   {showBuyButton && <th>Quantity</th>}
+  //                   {!showBuyButton && <th>Change</th>}
+  //                   {!showBuyButton && <th>Delete</th>}
+  //                 </tr>
+  //               </thead>
+  //               <tbody>
+  //                 {tickets.map((ticket) => (
+  //                   // const roni = formatPrice(ticket.price)
+  //                   <tr className="bg-base-200" key={ticket.id}>
+  //                     <td>{ticket.ticketType}</td>
+  //                     <td>{ticket.price / 100} RON</td>
+  //                     {/* <td>{ticket.price / 100} RON</td> */}
+  //                     <td>{ticket.ticketsAvailable}</td>
+  //                     {showBuyButton && (
+  //                       <td>
+  //                         <AmountButtons
+  //                           increase={() => increase(ticket.id)}
+  //                           decrease={() => decrease(ticket.id)}
+  //                           amount={amounts[ticket.id]}
+  //                         />
+  //                       </td>
+  //                     )}
+  //                     {!showBuyButton && (
+  //                       <td>
+  //                         <button
+  //                           className="btn"
+  //                           onClick={() =>
+  //                             document
+  //                               .getElementById(`my_modal_${ticket.id}`)
+  //                               .showModal()
+  //                           }
+  //                         >
+  //                           <AiOutlineEdit />
+  //                         </button>
+
+  //                         <dialog
+  //                           id={`my_modal_${ticket.id}`}
+  //                           className="modal"
+  //                         >
+  //                           <div className="modal-box">
+  //                             <Form
+  //                               method="post"
+  //                               action={`/edit-ticket/${ticket.id}`}
+  //                             >
+  //                               <h3 className="font-bold text-lg">
+  //                                 Change ticket data
+  //                               </h3>
+  //                               <div className="my-4"></div>
+
+  //                               <div>
+  //                                 <label>Tickets available</label>
+  //                                 <input
+  //                                   type="number"
+  //                                   name="ticketsAvailable"
+  //                                   defaultValue={ticket.ticketsAvailable}
+  //                                   className="input input-bordered w-52 max-w-xs mb-4"
+  //                                 />
+  //                               </div>
+
+  //                               <div>
+  //                                 <label>Ticket price</label>
+  //                                 <input
+  //                                   type="number"
+  //                                   name="price"
+  //                                   defaultValue={ticket.price}
+  //                                   className="input input-bordered w-52 max-w-xs"
+  //                                 />
+  //                               </div>
+
+  //                               <SubmitBtn
+  //                                 className="mt-4 w-52 max-w-xs"
+  //                                 text="Change"
+  //                               />
+  //                             </Form>
+
+  //                             <form method="dialog">
+  //                               <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+  //                                 ✕
+  //                               </button>
+  //                             </form>
+  //                           </div>
+  //                         </dialog>
+  //                       </td>
+  //                     )}
+
+  //                     {!showBuyButton && (
+  //                       <td>
+  //                         <Form
+  //                           method="post"
+  //                           action={`/delete-tickets/${ticket.id}`}
+  //                         >
+  //                           <button type="submit">
+  //                             <MdDeleteOutline />
+  //                           </button>
+  //                         </Form>
+  //                       </td>
+  //                     )}
+  //                   </tr>
+  //                 ))}
+  //               </tbody>
+  //             </table>
+
+  //             {showBuyButton && (
+  //               <div className="mt-10">
+  //                 <button className="btn btn-outline btn-md" onClick={addToBag}>
+  //                   Buy Ticket
+  //                 </button>
+  //               </div>
+  //             )}
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </section>
+  //   </>
+  // )
 }
 
 export default TicketsPerEvent
