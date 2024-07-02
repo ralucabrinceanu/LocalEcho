@@ -3,6 +3,7 @@ import { BadRequestError, NotFoundError } from '../errors/customErrors.js'
 import { PrismaClient } from '@prisma/client'
 import { checkPermissions } from '../utils/checkPermissions.js'
 import stripePackage from 'stripe'
+import { sendPdfEmail } from '../utils/sendPdfEmail.js'
 
 const prisma = new PrismaClient()
 // const stripe = new Stripe(
@@ -52,7 +53,12 @@ export const getCurrentUserOrders = async (req, res) => {
 
 export const createOrder = async (req, res) => {
   const { items: cartItems } = req.body
-  // console.log('CART ITEMS', cartItems)
+
+  const findUser = await prisma.users.findUnique({
+    where: { id: req.user.userId },
+  })
+  if (!findUser) throw new NotFoundError(`No user with id ${req.user.userId}`)
+  const sendToUser = findUser.email
 
   if (!cartItems || cartItems.length < 1)
     throw new BadRequestError('No cart items provided')
@@ -73,6 +79,7 @@ export const createOrder = async (req, res) => {
     }
 
     const { id, price } = dbTicket
+
     const singleOrderItem = {
       amount: item.amount,
       price,
@@ -107,12 +114,13 @@ export const createOrder = async (req, res) => {
       },
     },
   })
-  console.log(paymentIntent.status)
 
   const orderWithItems = {
     ...order,
     orderItems: orderItems,
   }
+
+  await sendPdfEmail(sendToUser, orderWithItems)
 
   res.status(StatusCodes.CREATED).json({
     order: orderWithItems,

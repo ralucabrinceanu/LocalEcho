@@ -19,7 +19,9 @@ export const loader =
     console.log('PARAMS', params)
 
     try {
-      const response = await customFetch.get('/orders/showAllMyOrders')
+      const response = await customFetch.get('/orders/showAllMyOrders', {
+        params,
+      })
       const orders = response.data.orders
       console.log('ORDERS', orders)
       const meta = response.data.meta

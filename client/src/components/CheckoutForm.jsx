@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
-import customFetch from '../utils'
-// import { clearCart } from '../features/cart/cartSlice'
 
 const CheckoutForm = (props) => {
   const stripe = useStripe()
   const elements = useElements()
-  // const dispatch = useDispatch()
 
   const [message, setMessage] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -16,10 +13,10 @@ const CheckoutForm = (props) => {
   // console.log(cartItems)
 
   // useEffect(() => {
-  //   const params = new URLSearchParams(window.location.search)
-  //   const secret = params.get('payment_intent_client_secret')
-  //   console.log(secret)
-  // }, [stripe])
+  //   if (!stripe) {
+  //     return
+  //   }
+  // })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -47,45 +44,12 @@ const CheckoutForm = (props) => {
           console.log('Unexpected error:', error)
         }
       }
-
-      if (paymentIntent && paymentIntent.status === 'succeeded') {
-        try {
-          setMessage('Payment succeeded! Order has been created.')
-          // dispatch(clearCart())
-        } catch (error) {
-          setMessage('Order creation failed...')
-        }
-      }
     } catch (e) {
       console.log('Exception occurred:', e)
       setMessage('An unexpected error occurred...')
     } finally {
       setIsLoading(false)
     }
-
-    // if (error.type === 'card_error' || error.type === 'validation_error') {
-    //   setMessage(error.message)
-    // } else {
-    //   setMessage('An unexpected error occurred...')
-    // }
-
-    // console.log(paymentIntent.status)
-    // if (paymentIntent && paymentIntent.status === 'succeeded') {
-    //   try {
-    //     const items = cartItems.map((item) => ({
-    //       amount: item.amount,
-    //       ticketId: item.ticketId,
-    //     }))
-    //     const response = await customFetch.post('/orders', { items })
-    //     // console.log(response)
-    //     setMessage('Payment succeeded! Order has been created.')
-    //     // dispatch(clearCart())
-    //   } catch (error) {
-    //     setMessage('Order creation failed...')
-    //   }
-    // }
-
-    // setIsLoading(false)
   }
 
   const paymentElementOptions = {

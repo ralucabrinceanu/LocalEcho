@@ -39,13 +39,24 @@ const Checkout = () => {
   return (
     <>
       <h1 className="text-3xl font-bold ">Order Total: {formatPrice(total)}</h1>
-      {stripePromise && clientSecret && (
+      {clientSecret && (
         <Elements stripe={stripePromise} options={options}>
           <CheckoutForm />
         </Elements>
       )}
     </>
   )
+
+  // return (
+  //   <>
+  //     <h1 className="text-3xl font-bold ">Order Total: {formatPrice(total)}</h1>
+  //     {stripePromise && clientSecret && (
+  //       <Elements stripe={stripePromise} options={options}>
+  //         <CheckoutForm />
+  //       </Elements>
+  //     )}
+  //   </>
+  // )
 }
 
 export default Checkout
