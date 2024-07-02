@@ -138,7 +138,7 @@ const TicketsPerEvent = ({ showBuyButton = true }) => {
                         <td>{roni}</td>
                         <td>{ticket.ticketsAvailable}</td>
                         {showBuyButton && (
-                          <td>
+                          <td className="flex justify-center items-center">
                             <AmountButtons
                               increase={() => increase(ticket.id)}
                               decrease={() => decrease(ticket.id)}

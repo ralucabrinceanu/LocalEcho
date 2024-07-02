@@ -6,9 +6,6 @@ import stripePackage from 'stripe'
 import { sendPdfEmail } from '../utils/sendPdfEmail.js'
 
 const prisma = new PrismaClient()
-// const stripe = new Stripe(
-//   'sk_test_51PLsLUGw9aMG63Jk72mmdYclbQrA6qlo9oTHloWm1SgQUBWKMYodhAiwpLdIXXWaAC3lt949WEKuHRJZ1RWWrW4e00GcJYlqet'
-// )
 const stripe = stripePackage(process.env.STRIPE_KEY)
 
 export const getAllOrders = async (req, res) => {
@@ -66,29 +63,42 @@ export const createOrder = async (req, res) => {
   let orderItems = []
   let subtotal = 0
 
-  for (const item of cartItems) {
-    // console.log('PROCESSING TICKET ID: ', item.ticketId)
-    const dbTicket = await prisma.tickets.findUnique({
-      where: { id: item.ticketId },
-    })
-    // console.log('TICKET', dbTicket)
-    if (!dbTicket) throw new NotFoundError(`No ticket with id ${item.ticketId}`)
+  await prisma.$transaction(async (prisma) => {
+    for (const item of cartItems) {
+      // console.log('PROCESSING TICKET ID: ', item.ticketId)
+      const dbTicket = await prisma.tickets.findUnique({
+        where: { id: item.ticketId },
+      })
+      // console.log('TICKET', dbTicket)
+      if (!dbTicket)
+        throw new NotFoundError(`No ticket with id ${item.ticketId}`)
 
-    if (item.amount > dbTicket.ticketsAvailable) {
-      throw new BadRequestError(`Not enough tickets available...`)
+      if (item.amount > dbTicket.ticketsAvailable) {
+        throw new BadRequestError(`Not enough tickets available...`)
+      }
+
+      const { id, price } = dbTicket
+
+      const singleOrderItem = {
+        amount: item.amount,
+        price,
+        ticketId: id,
+      }
+
+      orderItems = [...orderItems, singleOrderItem]
+      subtotal += item.amount * price
+
+      await prisma.tickets.update({
+        where: { id: item.ticketId },
+        data: {
+          ticketsAvailable: {
+            decrement: item.amount,
+          },
+        },
+      })
     }
+  })
 
-    const { id, price } = dbTicket
-
-    const singleOrderItem = {
-      amount: item.amount,
-      price,
-      ticketId: id,
-    }
-
-    orderItems = [...orderItems, singleOrderItem]
-    subtotal += item.amount * price
-  }
   const total = subtotal
 
   const paymentIntent = await stripe.paymentIntents.create({
@@ -128,6 +138,84 @@ export const createOrder = async (req, res) => {
     paymentIntentId: order.paymentIntentId,
   })
 }
+
+// export const createOrder = async (req, res) => {
+//   const { items: cartItems } = req.body
+
+//   const findUser = await prisma.users.findUnique({
+//     where: { id: req.user.userId },
+//   })
+//   if (!findUser) throw new NotFoundError(`No user with id ${req.user.userId}`)
+//   const sendToUser = findUser.email
+
+//   if (!cartItems || cartItems.length < 1)
+//     throw new BadRequestError('No cart items provided')
+
+//   let orderItems = []
+//   let subtotal = 0
+
+//   for (const item of cartItems) {
+//     // console.log('PROCESSING TICKET ID: ', item.ticketId)
+//     const dbTicket = await prisma.tickets.findUnique({
+//       where: { id: item.ticketId },
+//     })
+//     // console.log('TICKET', dbTicket)
+//     if (!dbTicket) throw new NotFoundError(`No ticket with id ${item.ticketId}`)
+
+//     if (item.amount > dbTicket.ticketsAvailable) {
+//       throw new BadRequestError(`Not enough tickets available...`)
+//     }
+
+//     const { id, price } = dbTicket
+
+//     const singleOrderItem = {
+//       amount: item.amount,
+//       price,
+//       ticketId: id,
+//     }
+
+//     orderItems = [...orderItems, singleOrderItem]
+//     subtotal += item.amount * price
+//   }
+//   const total = subtotal
+
+//   const paymentIntent = await stripe.paymentIntents.create({
+//     amount: total,
+//     currency: 'ron',
+//     automatic_payment_methods: {
+//       enabled: true,
+//     },
+//   })
+
+//   const order = await prisma.orders.create({
+//     data: {
+//       total,
+//       clientSecret: paymentIntent.client_secret,
+//       paymentIntentId: paymentIntent.id,
+//       orderedById: req.user.userId,
+//       orderItems: {
+//         create: orderItems.map((item) => ({
+//           amount: item.amount,
+//           price: item.price,
+//           ticketId: item.ticketId,
+//         })),
+//       },
+//     },
+//   })
+
+//   const orderWithItems = {
+//     ...order,
+//     orderItems: orderItems,
+//   }
+
+//   await sendPdfEmail(sendToUser, orderWithItems)
+
+//   res.status(StatusCodes.CREATED).json({
+//     order: orderWithItems,
+//     clientSecret: order.clientSecret,
+//     paymentIntentId: order.paymentIntentId,
+//   })
+// }
 
 // export const updateOrder = async (req, res) => {
 //   const { id } = req.params
